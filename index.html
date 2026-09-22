@@ -1,77 +1,38 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#003c32">
-<link rel="apple-touch-icon" href="./assets/icon.svg">
-<link rel="stylesheet" href="./styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#003c32">
+<link rel="apple-touch-icon" href="./icon-192.svg"><link rel="stylesheet" href="./styles.css">
 <title>Portal Escolar</title>
 </head>
 <body>
-<div id="login" class="screen">
-  <div class="login-card">
-    <img src="./assets/logo.svg" alt="Logo de la escuela">
-    <div class="eyebrow">PORTAL ESCOLAR 2026–2027</div>
-    <h1>Escuela Secundaria</h1>
-    <p>Santa Ana Batha · Chilcuautla</p>
-    <label>Contraseña general</label>
-    <input id="pw" type="password">
-    <button class="primary" onclick="enter()">Entrar</button>
-    <div id="msg" class="msg"></div>
-  </div>
-</div>
-<div id="app" class="hidden">
-<header>
-  <div class="brand"><img src="./assets/logo.svg" alt="Logo"><div><b>Portal Escolar</b><span>2026–2027</span></div></div>
-  <div class="header-actions">
-    <button id="installBtn" class="ghost" onclick="installPortal()">📲 Instalar</button>
-    <button class="ghost" onclick="location.reload()">Salir</button>
-  </div>
-</header>
-<main>
-<section class="hero">
-  <div><div class="eyebrow">ESCUELA SECUNDARIA GENERAL FRANCISCO GONZÁLEZ BOCANEGRA</div><h2>Portal Escolar</h2><p>Consulta de actividades y evaluaciones.</p></div>
-  <img src="./assets/microscope.svg" alt="Microscopio">
-</section>
-<section id="home">
-  <h2>Mis materias</h2>
-  <div class="grid">
-    <article class="subject" onclick="openStudent()"><img src="./assets/cell.svg" alt="Célula"><h3>🧬 Biología</h3><p>1.º secundaria</p><span class="badge">ACTIVA</span></article>
-    <article class="subject"><img src="./assets/dna.svg" alt="ADN"><h3>⚛️ Física</h3><p>Próximamente</p></article>
-    <article class="subject"><img src="./assets/microscope.svg" alt="Microscopio"><h3>💻 Ofimática</h3><p>Próximamente</p></article>
-    <article class="subject"><img src="./assets/bacteria.svg" alt="Bacteria"><h3>🤝 Tutoría</h3><p>Próximamente</p></article>
-  </div>
-  <div class="center"><button class="secondary" onclick="teacher()">🔐 Acceso docente</button></div>
-</section>
+<div id="login" class="screen"><div class="login-card">
+<img src="./logo-escuela.svg" alt="Logo de la escuela"><div class="eyebrow">PORTAL ESCOLAR 2026–2027</div>
+<h1>Escuela Secundaria</h1><p>Santa Ana Batha · Chilcuautla</p><label>Contraseña general</label>
+<input id="pw" type="password"><button class="primary" onclick="enter()">Entrar</button><div id="msg" class="msg"></div>
+</div></div>
+<div id="app" class="hidden"><header><div class="brand"><img src="./logo-escuela.svg" alt="Logo"><div><b>Portal Escolar</b><span>2026–2027</span></div></div>
+<div class="header-actions"><button id="installBtn" class="ghost" onclick="installPortal()">📲 Instalar</button><button class="ghost" onclick="location.reload()">Salir</button></div></header>
+<main><section class="hero"><div><div class="eyebrow">ESCUELA SECUNDARIA GENERAL FRANCISCO GONZÁLEZ BOCANEGRA</div><h2>Portal Escolar</h2><p>Consulta de actividades y evaluaciones.</p></div><img src="./microscope.svg" alt="Microscopio"></section>
+<section id="home"><h2>Mis materias</h2><div class="grid">
+<article class="subject" onclick="openStudent()"><img src="./cell.svg" alt="Célula"><h3>🧬 Biología</h3><p>1.º secundaria</p><span class="badge">ACTIVA</span></article>
+<article class="subject"><img src="./dna.svg" alt="ADN"><h3>⚛️ Física</h3><p>Próximamente</p></article>
+<article class="subject"><img src="./microscope.svg" alt="Microscopio"><h3>💻 Ofimática</h3><p>Próximamente</p></article>
+<article class="subject"><img src="./bacteria.svg" alt="Bacteria"><h3>🤝 Tutoría</h3><p>Próximamente</p></article>
+</div><div class="center"><button class="secondary" onclick="teacher()">🔐 Acceso docente</button></div></section>
 <section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section>
 <section id="teacher" class="hidden"><button class="back" onclick="home()">← Materias</button><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
-</main>
-<footer>Portal Escolar · Piloto definitivo</footer>
-</div>
+</main><footer>Portal Escolar · Piloto definitivo</footer></div>
 <script src="./app-local.js"></script>
 <script>
 let deferredInstall=null;
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault(); deferredInstall=e;
-  const b=document.getElementById("installBtn"); if(b)b.classList.remove("hidden");
-});
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
 window.addEventListener("appinstalled",()=>{deferredInstall=null});
 async function installPortal(){
-  if(deferredInstall){
-    deferredInstall.prompt();
-    await deferredInstall.userChoice;
-    deferredInstall=null;
-    return;
-  }
-  const ua=navigator.userAgent||"";
-  if(/iPhone|iPad|iPod/i.test(ua)){
-    alert("Para instalar en iPhone/iPad: toca Compartir (□↑) y elige “Añadir a pantalla de inicio”.");
-  }else{
-    alert("Si estás en Android con Chrome: abre el menú ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si no aparece, recarga el portal una vez.");
-  }
+ if(deferredInstall){deferredInstall.prompt();await deferredInstall.userChoice;deferredInstall=null;return}
+ const ua=navigator.userAgent||"";
+ if(/iPhone|iPad|iPod/i.test(ua)) alert("En iPhone/iPad: toca Compartir (□↑) y selecciona “Añadir a pantalla de inicio”.");
+ else alert("En Android con Chrome: abre ⋮ y selecciona “Instalar aplicación” o “Añadir a pantalla de inicio”. Si no aparece, recarga el portal.");
 }
-</script>
-</body>
-</html>
+</script></body></html>
