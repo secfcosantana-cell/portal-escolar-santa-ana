@@ -14,13 +14,29 @@
 </div></div>
 <div id="app" class="hidden"><header><div class="brand"><img src="./assets/logo-real.png" alt="Logo oficial"><div><b>Portal Escolar</b><span>2026–2027</span></div></div>
 <div class="header-actions"><button id="installBtn" class="ghost" onclick="installPortal()">📲 Instalar</button><button class="ghost" onclick="location.reload()">Salir</button></div></header>
-<main><section class="hero"><div><div class="eyebrow">ESCUELA SECUNDARIA GENERAL FRANCISCO GONZÁLEZ BOCANEGRA</div><h2>Portal Escolar</h2><p>Consulta de actividades y evaluaciones.</p></div><img src="./assets/microscope.svg" alt="Microscopio"></section>
-<section id="home"><h2>Mis materias</h2><div class="grid">
-<article class="subject" onclick="openStudent()"><img src="./assets/cell.svg" alt="Célula"><h3>🧬 Biología</h3><p>1.º secundaria</p><span class="badge">ACTIVA</span></article>
-<article class="subject" onclick="openPhysics()"><img src="./assets/dna.svg" alt="ADN"><h3>⚛️ Física</h3><p>2.º A</p><span class="badge">ACTIVA</span></article>
-<article class="subject"><img src="./assets/microscope.svg" alt="Microscopio"><h3>💻 Ofimática</h3><p>Próximamente</p></article>
-<article class="subject"><img src="./assets/bacteria.svg" alt="Bacteria"><h3>🤝 Tutoría</h3><p>Próximamente</p></article>
-</div><div class="center"><button class="secondary" onclick="teacher()">🔐 Acceso docente</button></div></section>
+<main><section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">ESCUELA SECUNDARIA GENERAL FRANCISCO GONZÁLEZ BOCANEGRA</div>
+    <h2>Portal Escolar</h2>
+    <p>Un espacio digital para aprender, consultar actividades y dar seguimiento a tus avances.</p>
+    <div class="hero-pills"><span>📚 Aprendizaje</span><span>🔬 Ciencia</span><span>💻 Tecnología</span><span>🤝 Comunidad</span></div>
+  </div>
+  <div class="hero-art">
+    <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+    <img src="./assets/microscope.svg" alt="Microscopio">
+    <strong>Aprender · Crear · Avanzar</strong>
+  </div>
+</section>
+<section class="welcome-strip">
+  <div><span class="mini-label">BIENVENIDA</span><h3>Tu escuela también está en línea</h3><p>Consulta tus actividades y evaluaciones desde computadora, tableta o teléfono.</p></div>
+  <div class="school-mark"><b>FGB</b><span>2026–2027</span></div>
+</section>
+<section id="home"><div class="section-title"><div><div class="mini-label">ESPACIOS DE APRENDIZAJE</div><h2>Mis materias</h2><p>Selecciona una materia para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
+<article class="subject subject-biology" onclick="openStudent"><div class="subject-img"><img src="./assets/biology-card.svg" alt="Biología"></div><div class="subject-body"><div class="subject-icon">🧬</div><h3>Biología</h3><p>1.º secundaria</p><span class="badge">ACTIVA</span></div></article>
+<article class="subject subject-physics" onclick="openPhysics()"><div class="subject-img"><img src="./assets/physics-card.svg" alt="Física"></div><div class="subject-body"><div class="subject-icon">⚛️</div><h3>Física</h3><p>2.º A</p><span class="badge">ACTIVA</span></div></article>
+<article class="subject subject-ofimatica"><div class="subject-img"><img src="./assets/ofimatica-card.svg" alt="Ofimática"></div><div class="subject-body"><div class="subject-icon">💻</div><h3>Ofimática</h3><p>Próximamente</p><span class="badge soon">PRÓXIMAMENTE</span></div></article>
+<article class="subject subject-tutoria"><div class="subject-img"><img src="./assets/tutoria-card.svg" alt="Tutoría"></div><div class="subject-body"><div class="subject-icon">🤝</div><h3>Tutoría</h3><p>Próximamente</p><span class="badge soon">PRÓXIMAMENTE</span></div></article>
+</div><div class="quick-info"><div>🔒 <b>Acceso protegido</b><span>Consulta personal con PIN</span></div><div>📈 <b>Seguimiento</b><span>Avance actualizado</span></div><div>📱 <b>Desde cualquier dispositivo</b><span>Portal instalable</span></div></div><div class="center"><button class="secondary teacher-btn" onclick="teacher()">🔐 Acceso docente</button></div></section>
 <section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
 <section id="teacher" class="hidden"><button class="back" onclick="home()">← Materias</button><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
