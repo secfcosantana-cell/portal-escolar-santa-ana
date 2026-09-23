@@ -17,11 +17,11 @@
 <main><section class="hero"><div><div class="eyebrow">ESCUELA SECUNDARIA GENERAL FRANCISCO GONZÁLEZ BOCANEGRA</div><h2>Portal Escolar</h2><p>Consulta de actividades y evaluaciones.</p></div><img src="./assets/microscope.svg" alt="Microscopio"></section>
 <section id="home"><h2>Mis materias</h2><div class="grid">
 <article class="subject" onclick="openStudent()"><img src="./assets/cell.svg" alt="Célula"><h3>🧬 Biología</h3><p>1.º secundaria</p><span class="badge">ACTIVA</span></article>
-<article class="subject"><img src="./assets/dna.svg" alt="ADN"><h3>⚛️ Física</h3><p>Próximamente</p></article>
+<article class="subject" onclick="openPhysics()"><img src="./assets/dna.svg" alt="ADN"><h3>⚛️ Física</h3><p>2.º A</p><span class="badge">ACTIVA</span></article>
 <article class="subject"><img src="./assets/microscope.svg" alt="Microscopio"><h3>💻 Ofimática</h3><p>Próximamente</p></article>
 <article class="subject"><img src="./assets/bacteria.svg" alt="Bacteria"><h3>🤝 Tutoría</h3><p>Próximamente</p></article>
 </div><div class="center"><button class="secondary" onclick="teacher()">🔐 Acceso docente</button></div></section>
-<section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section>
+<section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
 <section id="teacher" class="hidden"><button class="back" onclick="home()">← Materias</button><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
 <script src="./app-local.js"></script>
