@@ -34,7 +34,7 @@ async function physicsStudentLogin(){
 
 function renderPhysicsStudent(d){
   const p=Number(d.porcentaje)||0;
-  document.getElementById('physicsBox').innerHTML='<div class="box"><button class="back" onclick="openPhysics()">← Regresar</button><div class="eyebrow">'+escapeHtml(d.alumno.grupo)+' · FÍSICA · EN LÍNEA</div><h2>'+escapeHtml(d.alumno.nombre)+'</h2><div class="muted">Solo lectura · Información actualizada desde Google Sheets</div><div class="studentHead"><b>Avance</b><div class="percent">'+p+'%</div></div><div class="progress"><div class="bar" style="width:'+Math.min(p,100)+'%"></div></div>'+d.actividades.map(a=>'<div class="activity"><span>⚛️</span><div class="grow"><b>'+escapeHtml(a.name)+'</b><div class="muted">'+Number(a.weight)+'%</div></div><span>'+(a.realizada?'✅':'⬜')+'</span></div>').join('')+'</div>';
+  document.getElementById('physicsBox').innerHTML='<div class="box"><button class="back" onclick="openPhysics()">← Regresar</button><div class="eyebrow">'+escapeHtml(d.alumno.grupo)+' · FÍSICA · EN LÍNEA</div><h2>'+escapeHtml(d.alumno.nombre)+'</h2><div class="muted">Solo lectura · Información actualizada desde Google Sheets</div><div class="studentHead"><b>Avance</b><div class="percent">'+p+'%</div></div><div class="progress"><div class="bar" style="width:'+Math.min(p,100)+'%"></div></div>'+d.actividades.map(a=>'<div class="activity"><span>⚛️</span><div class="grow"><b>'+escapeHtml(a.nombre || a.Actividad || a.name || '')+'</b><div class="muted">'+Number(a.porcentaje ?? a.Porcentaje ?? a.weight ?? 0)+'%</div></div><span>'+(a.realizada?'✅':'⬜')+'</span></div>').join('')+'</div>';
 }
 
 async function physicsTeacherLogin(){
