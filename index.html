@@ -34,13 +34,11 @@
 <section id="home"><div class="section-title"><div><div class="mini-label">ESPACIOS DE APRENDIZAJE</div><h2>Mis materias</h2><p>Selecciona una materia para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
 <article class="subject subject-biology" onclick="openStudent()"><div class="subject-img"><img src="./assets/biology-card.svg" alt="Biología"></div><div class="subject-body"><div class="subject-icon">🧬</div><h3>Biología</h3><p>1.º secundaria</p><span class="badge">ACTIVA</span></div></article>
 <article class="subject subject-physics" onclick="openPhysics()"><div class="subject-img"><img src="./assets/physics-card.svg" alt="Física"></div><div class="subject-body"><div class="subject-icon">⚛️</div><h3>Física</h3><p>2.º A</p><span class="badge">ACTIVA</span></div></article>
-<article class="subject subject-ofimatica"><div class="subject-img"><img src="./assets/ofimatica-card.svg" alt="Ofimática"></div><div class="subject-body"><div class="subject-icon">💻</div><h3>Ofimática</h3><p>Próximamente</p><span class="badge soon">PRÓXIMAMENTE</span></div></article>
-<article class="subject subject-tutoria"><div class="subject-img"><img src="./assets/tutoria-card.svg" alt="Tutoría"></div><div class="subject-body"><div class="subject-icon">🤝</div><h3>Tutoría</h3><p>Próximamente</p><span class="badge soon">PRÓXIMAMENTE</span></div></article>
 </div><div class="quick-info"><div>🔒 <b>Acceso protegido</b><span>Consulta personal con PIN</span></div><div>📈 <b>Seguimiento</b><span>Avance actualizado</span></div><div>📱 <b>Desde cualquier dispositivo</b><span>Portal instalable</span></div></div><div class="center"><button class="secondary teacher-btn" onclick="teacher()">🔐 Acceso docente</button></div></section>
-<section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
+<section id="teacherDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
 <section id="teacher" class="hidden"><button class="back" onclick="home()">← Materias</button><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
-<script src="./app-local.js"></script><script src="./physics.js"></script>
+<script src="./app-local.js"></script><script src="./physics.js"></script><script src="./teachers.js"></script>
 <script>
 let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
