@@ -134,3 +134,10 @@ footer{letter-spacing:.05em}
 .teacher-card:nth-child(2):before{background-image:url('./assets/teacher-arts.svg')}
 .teacher-card:nth-child(3):before{background-image:url('./assets/teacher-math.svg')}
 .teacher-card .teacher-avatar{margin-top:-31px;position:relative;z-index:2}
+
+/* Segunda pagina: consulta de alumnos */
+.student-directory-btn{margin-top:18px}
+.student-help{margin:20px auto 0;max-width:980px;border:1px solid #dcece6;background:#f7fcfa;border-radius:18px;padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:center;color:#315e54}
+.student-help b{color:#075542}
+.student-choice{max-width:850px;margin:0 auto}
+.student-choice-grid{display:grid;gap:12px;margin-top:18px}
