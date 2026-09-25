@@ -6,7 +6,7 @@ function openPhysics(){
   document.getElementById('student').classList.add('hidden');
   document.getElementById('teacher').classList.add('hidden');
   document.getElementById('physics').classList.remove('hidden');
-  document.getElementById('physicsBox').innerHTML='<div class="box"><div class="eyebrow">FÍSICA · 2.º A</div><h2>Consulta tu evaluación</h2><p>Usa tu número de lista y PIN personal.</p><label>Número de lista</label><select id="fnum"></select><label>PIN personal</label><input id="fpin" maxlength="4" inputmode="numeric" autocomplete="off"><button class="primary" onclick="physicsStudentLogin()">Consultar evaluación</button><button class="secondary" onclick="physicsTeacherLogin()">🔐 Acceso docente</button><div id="fmsg" class="msg"></div></div>';
+  document.getElementById('physicsBox').innerHTML='<div class="box"><div class="eyebrow">FÍSICA · 2.º A</div><h2>Consulta tu evaluación</h2><p>Selecciona tu grupo, número de lista y PIN personal.</p><label>Grupo</label><select id="fgroup"><option value="2.º A">2.º A</option></select><label>Número de lista</label><select id="fnum"></select><label>PIN personal</label><input id="fpin" maxlength="4" inputmode="numeric" autocomplete="off"><button class="primary" onclick="physicsStudentLogin()">Consultar evaluación</button><button class="secondary" onclick="physicsTeacherLogin()">🔐 Acceso docente</button><div id="fmsg" class="msg"></div></div>';
   physicsNums();
 }
 
@@ -17,12 +17,13 @@ function physicsNums(){
 }
 
 async function physicsStudentLogin(){
+  const g=document.getElementById('fgroup').value;
   const n=document.getElementById('fnum').value;
   const p=document.getElementById('fpin').value.trim();
   const msg=document.getElementById('fmsg');
   msg.textContent='Consultando...';
   try{
-    const u=PHYSICS_SCRIPT_URL+'?action=student&grupo='+encodeURIComponent('2.º A')+'&num='+encodeURIComponent(n)+'&pin='+encodeURIComponent(p)+'&_='+Date.now();
+    const u=PHYSICS_SCRIPT_URL+'?action=student&grupo='+encodeURIComponent(g)+'&num='+encodeURIComponent(n)+'&pin='+encodeURIComponent(p)+'&_='+Date.now();
     const r=await fetch(u,{cache:'no-store'});
     const d=await r.json();
     if(!d.ok){msg.textContent=d.error||'Datos incorrectos.';return;}
