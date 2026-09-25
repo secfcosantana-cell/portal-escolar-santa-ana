@@ -62,3 +62,25 @@ function openFranciscoGroup(group){
 function teacherPending(group){
   alert(group+' está preparado en el menú. La consulta de evaluaciones se conectará cuando terminemos de integrar el Google Sheets maestro.');
 }
+
+function openStudentDirectory(){
+  home();
+  $('home').classList.add('hidden');
+  $('studentDirectory').classList.remove('hidden');
+  renderStudentDirectory();
+}
+
+function renderStudentDirectory(){
+  const box=$('studentDirectoryBox');
+  box.innerHTML='<div class="teacher-menu-head"><div><div class="eyebrow">CONSULTA DE ALUMNOS · ACCESO PERSONAL</div><h2>Consulta tus actividades</h2><p class="muted">Selecciona a tu docente para entrar a la consulta de actividades y evaluaciones.</p></div><div class="teacher-lock">🔒 PIN personal</div></div><div class="teacher-grid student-directory-grid">'+TEACHER_DIRECTORY.map(t=>'<button class="teacher-card '+(t.active?'teacher-active':'')+'" onclick="openStudentTeacher(\\''+t.id+'\\')"><span class="teacher-avatar">'+t.icon+'</span><span class="teacher-name">'+escapeHtml(t.name)+'</span><span class="teacher-role">'+escapeHtml(t.role)+'</span><span class="teacher-count">'+t.groups.length+' grupo(s)</span></button>').join('')+'</div><div class="student-help"><b>¿Cómo consultar?</b><span>Elige tu docente → selecciona la materia o grupo → captura tu número de lista y PIN personal.</span></div>';
+}
+
+function openStudentTeacher(id){
+  const t=TEACHER_DIRECTORY.find(x=>x.id===id);
+  if(!t)return;
+  if(id!=='francisco'){
+    $('studentDirectoryBox').innerHTML='<div class="box"><button class="back" onclick="renderStudentDirectory()">← Docentes</button><div class="eyebrow">CONSULTA DE ALUMNOS</div><h2>'+escapeHtml(t.name)+'</h2><p class="muted">'+escapeHtml(t.role)+'</p><div class="msg">La conexión de las evaluaciones de esta materia todavía está en integración. Esta pantalla ya queda preparada para agregar el acceso con grupo, número de lista y PIN.</div></div>';
+    return;
+  }
+  $('studentDirectoryBox').innerHTML='<div class="box student-choice"><button class="back" onclick="renderStudentDirectory()">← Docentes</button><div class="eyebrow">ALFREDO · BIOLOGÍA Y FÍSICA</div><h2>Selecciona tu materia</h2><p class="muted">Después podrás elegir grupo, número de lista y PIN personal.</p><div class="student-choice-grid"><button class="teacher-group-card" onclick="openStudent()"><span class="group-icon">🧬</span><span><b>Biología · 1.º A, B o C</b><small>Consulta tus actividades y avance</small></span><span>→</span></button><button class="teacher-group-card" onclick="openPhysics()"><span class="group-icon">⚛️</span><span><b>Física · 2.º A</b><small>Consulta tus actividades y avance</small></span><span>→</span></button></div></div>';
+}
