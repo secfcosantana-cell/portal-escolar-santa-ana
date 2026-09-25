@@ -26,15 +26,15 @@ function openTeacherProfile(id){
   const t=TEACHER_DIRECTORY.find(x=>x.id===id);
   if(!t)return;
   const box=$('teacherDirectoryBox');
+  if(id==='francisco'){
+    box.innerHTML='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE</div><h2>Alfredo</h2><p class="muted">Biología y Física</p></div></div><div class="teacher-groups-title">Selecciona la materia</div><div class="teacher-group-grid"><button class="teacher-group-card" onclick="openFranciscoGroup(\'Biología · 1.º A\')"><span class="group-icon">🧬</span><span><b>Biología</b><small>Grupos 1.º A, 1.º B y 1.º C · Consulta y evaluación</small></span><span>→</span></button><button class="teacher-group-card" onclick="openFranciscoGroup(\'Física · 2.º A\')"><span class="group-icon">⚛️</span><span><b>Física</b><small>Grupo 2.º A · Consulta y evaluación</small></span><span>→</span></button></div></div>';
+    return;
+  }
   let html='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE</div><h2>'+escapeHtml(t.name)+'</h2><p class="muted">'+escapeHtml(t.role)+'</p></div></div><div class="teacher-groups-title">Mis materias y grupos</div><div class="teacher-group-grid">';
-  html+=t.groups.map((g,i)=>{
-    const functional=t.active;
-    return '<button class="teacher-group-card '+(functional?'':'teacher-group-pending')+'" onclick="'+(functional?'openFranciscoGroup(\''+escapeHtml(g)+'\')':'teacherPending(\''+escapeHtml(g)+'\')')+'"><span class="group-icon">'+(g.startsWith('Física')?'⚛️':'🔬')+'</span><span><b>'+escapeHtml(g)+'</b><small>'+(functional?'Abrir consulta y evaluación':'Lista preparada · conexión pendiente')+'</small></span><span>→</span></button>';
-  }).join('');
+  html+=t.groups.map(g=>'<button class="teacher-group-card teacher-group-pending" onclick="teacherPending(\''+escapeHtml(g)+'\')"><span class="group-icon">📚</span><span><b>'+escapeHtml(g)+'</b><small>Lista preparada · conexión pendiente</small></span><span>→</span></button>').join('');
   html+='</div></div>';
   box.innerHTML=html;
 }
-
 function openFranciscoGroup(group){
   if(group.startsWith('Biología')){
     $('teacherDirectory').classList.add('hidden');
@@ -72,7 +72,7 @@ function openStudentDirectory(){
 
 function renderStudentDirectory(){
   const box=$('studentDirectoryBox');
-  box.innerHTML='<div class="teacher-menu-head"><div><div class="eyebrow">CONSULTA DE ALUMNOS · ACCESO PERSONAL</div><h2>Consulta tus actividades</h2><p class="muted">Selecciona a tu docente para entrar a la consulta de actividades y evaluaciones.</p></div><div class="teacher-lock">🔒 PIN personal</div></div><div class="teacher-grid student-directory-grid">'+TEACHER_DIRECTORY.filter(t=>t.active).map(t=>'<button class="teacher-card student-subject-card" data-teacher-id="'+t.id+'" onclick="openStudentTeacher(this.dataset.teacherId)"><span class="student-subject-image"></span><span class="teacher-avatar">'+t.icon+'</span><span class="teacher-name">'+escapeHtml(t.name)+'</span><span class="teacher-role">'+escapeHtml(t.role)+'</span><span class="teacher-count">'+t.groups.length+' grupo(s)</span></button>').join('')+'</div><div class="student-help"><b>¿Cómo consultar?</b><span>Elige tu docente → selecciona la materia o grupo → captura tu número de lista y PIN personal.</span></div>';
+  box.innerHTML='<div class="teacher-menu-head"><div><div class="eyebrow">CONSULTA DE ALUMNOS · ACCESO PERSONAL</div><h2>Consulta tus actividades</h2><p class="muted">Selecciona a tu docente.</p></div><div class="teacher-lock">🔒 PIN personal</div></div><div class="teacher-grid student-directory-grid"><button class="teacher-card student-subject-card" onclick="openStudentTeacher(\'francisco\')"><span class="student-subject-image"></span><span class="teacher-avatar">👨‍🏫</span><span class="teacher-name">Alfredo</span><span class="teacher-role">Biología y Física</span><span class="teacher-count">2 materias</span></button></div><div class="student-help"><b>¿Cómo consultar?</b><span>Selecciona Alfredo → elige Biología o Física → captura grupo, número de lista y PIN.</span></div>';
 }
 function openStudentTeacher(id){
   const t=TEACHER_DIRECTORY.find(x=>x.id===id);
