@@ -26,7 +26,7 @@ function openTeacherProfile(id){
   const t=TEACHER_DIRECTORY.find(x=>x.id===id);
   if(!t)return;
   const box=$('teacherDirectoryBox');
-  let html='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE</div><h2>'+escapeHtml(t.name)+'</h2><p class="muted">'+escapeHtml(t.role)+'</p></div></div><div class="teacher-groups-title">Mis materias y grupos</div><div class="teacher-group-grid">';
+  let html='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE</div><h2>'+escapeHtml(t.name)+'</h2><p class="muted">'+escapeHtml(t.role)+'</p></div></div><div class="teacher-groups-title">Materias y grupos</div><div class="teacher-group-grid">';
   html+=t.groups.map((g,i)=>{
     const functional=t.active;
     return '<button class="teacher-group-card '+(functional?'':'teacher-group-pending')+'" onclick="'+(functional?'openFranciscoGroup(\''+escapeHtml(g)+'\')':'teacherPending(\''+escapeHtml(g)+'\')')+'"><span class="group-icon">'+(g.startsWith('Física')?'⚛️':'🔬')+'</span><span><b>'+escapeHtml(g)+'</b><small>'+(functional?'Abrir consulta y evaluación':'Lista preparada · conexión pendiente')+'</small></span><span>→</span></button>';
