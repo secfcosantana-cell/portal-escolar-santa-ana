@@ -82,5 +82,14 @@ function openStudentTeacher(id){
     $('studentDirectoryBox').innerHTML='<div class="box"><button class="back" onclick="renderStudentDirectory()">← Docentes</button><div class="eyebrow">CONSULTA DE ALUMNOS</div><h2>'+escapeHtml(t.name)+'</h2><p class="muted">'+escapeHtml(t.role)+'</p><div class="msg">La conexión de las evaluaciones de esta materia todavía está en integración. Esta pantalla ya queda preparada para agregar el acceso con grupo, número de lista y PIN.</div></div>';
     return;
   }
-  $('studentDirectoryBox').innerHTML='<div class="box student-choice"><button class="back" onclick="renderStudentDirectory()">← Docentes</button><div class="eyebrow">ALFREDO · BIOLOGÍA Y FÍSICA</div><h2>Selecciona tu materia</h2><p class="muted">Después podrás elegir grupo, número de lista y PIN personal.</p><div class="student-choice-grid"><button class="teacher-group-card" onclick="openStudent()"><span class="group-icon">🧬</span><span><b>Biología · 1.º A, B o C</b><small>Consulta tus actividades y avance</small></span><span>→</span></button><button class="teacher-group-card" onclick="openPhysics()"><span class="group-icon">⚛️</span><span><b>Física · 2.º A</b><small>Consulta tus actividades y avance</small></span><span>→</span></button></div></div>';
+  $('studentDirectoryBox').innerHTML='<div class="box student-choice"><button class="back" onclick="renderStudentDirectory()">← Docentes</button><div class="eyebrow">ALFREDO · BIOLOGÍA Y FÍSICA</div><h2>Selecciona tu materia</h2><p class="muted">Después podrás elegir grupo, número de lista y PIN personal.</p><div class="student-choice-grid"><button class="teacher-group-card" onclick="openStudentFromDirectory()"><span class="group-icon">🧬</span><span><b>Biología · 1.º A, B o C</b><small>Consulta tus actividades y avance</small></span><span>→</span></button><button class="teacher-group-card" onclick="openPhysicsFromDirectory()"><span class="group-icon">⚛️</span><span><b>Física · 2.º A</b><small>Consulta tus actividades y avance</small></span><span>→</span></button></div></div>';
+}
+
+function openStudentFromDirectory(){
+  openStudent();
+  $('studentDirectory').classList.add('hidden');
+}
+function openPhysicsFromDirectory(){
+  openPhysics();
+  $('studentDirectory').classList.add('hidden');
 }
