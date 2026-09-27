@@ -1,4 +1,5 @@
 const PHYSICS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx-H4rNiEyoLQlmNUQsLyMbjCerDHZ8eOiVZBkyY869k2CR-kP0LOhvxkujkBav8Gab/exec';
+const PHYSICS_STUDENT_SCRIPT_URL='https://script.google.com/macros/s/AKfycby3xGQ-PxeVThLd_iUWqAuvc5Vzk6YyZd6VYS8ac2FH6wbLG-eloUbBDijxQhzic72v/exec';
 let physicsTeacherPinSession='';
 
 function openPhysics(){
@@ -6,7 +7,7 @@ function openPhysics(){
   document.getElementById('student').classList.add('hidden');
   document.getElementById('teacher').classList.add('hidden');
   document.getElementById('physics').classList.remove('hidden');
-  document.getElementById('physicsBox').innerHTML='<div class="box"><div class="eyebrow">FÍSICA · 2.º A</div><h2>Consulta tu evaluación</h2><p>Selecciona tu grupo, número de lista y PIN personal.</p><label>Grupo</label><select id="fgroup"><option value="2.º A">2.º A</option></select><label>Número de lista</label><select id="fnum"></select><label>PIN personal</label><input id="fpin" maxlength="4" inputmode="numeric" autocomplete="off"><button class="primary" onclick="physicsStudentLogin()">Consultar evaluación</button><button class="secondary" onclick="physicsTeacherLogin()">🔐 Acceso docente</button><div id="fmsg" class="msg"></div></div>';
+  document.getElementById('physicsBox').innerHTML='<div class="box"><div class="eyebrow">FÍSICA · 2.º A</div><h2>Consulta tu evaluación</h2><p>Selecciona tu grupo, número de lista y PIN personal.</p><label>Grupo</label><select id="fgroup"><option value="2.º A">2.º A</option></select><label>Número de lista</label><select id="fnum"></select><label>PIN personal</label><input id="fpin" maxlength="20" inputmode="numeric" autocomplete="off"><button class="primary" onclick="physicsStudentLogin()">Consultar evaluación</button><button class="secondary" onclick="physicsTeacherLogin()">🔐 Acceso docente</button><div id="fmsg" class="msg"></div></div>';
   physicsNums();
 }
 
@@ -23,7 +24,7 @@ async function physicsStudentLogin(){
   const msg=document.getElementById('fmsg');
   msg.textContent='Consultando...';
   try{
-    const u=PHYSICS_SCRIPT_URL+'?action=student&grupo='+encodeURIComponent(g)+'&num='+encodeURIComponent(n)+'&pin='+encodeURIComponent(p)+'&_='+Date.now();
+    const u=PHYSICS_STUDENT_SCRIPT_URL+'?action=student&grupo='+encodeURIComponent(g)+'&lista='+encodeURIComponent(n)+'&pin='+encodeURIComponent(p)+'&materia=Física&_='+Date.now();
     const r=await fetch(u,{cache:'no-store'});
     const d=await r.json();
     if(!d.ok){msg.textContent=d.error||'Datos incorrectos.';return;}
@@ -35,7 +36,8 @@ async function physicsStudentLogin(){
 
 function renderPhysicsStudent(d){
   const p=Number(d.porcentaje)||0;
-  document.getElementById('physicsBox').innerHTML='<div class="box"><button class="back" onclick="openPhysics()">← Regresar</button><div class="eyebrow">'+escapeHtml(d.alumno.grupo)+' · FÍSICA · EN LÍNEA</div><h2>'+escapeHtml(d.alumno.nombre)+'</h2><div class="muted">Solo lectura · Información actualizada desde Google Sheets</div><div class="studentHead"><b>Avance</b><div class="percent">'+p+'%</div></div><div class="progress"><div class="bar" style="width:'+Math.min(p,100)+'%"></div></div>'+d.actividades.map(a=>'<div class="activity"><span>⚛️</span><div class="grow"><b>'+escapeHtml(a.nombre || a.Actividad || a.name || '')+'</b><div class="muted">'+Number(a.porcentaje ?? a.Porcentaje ?? a.weight ?? 0)+'%</div></div><span>'+(a.realizada?'✅':'⬜')+'</span></div>').join('')+'</div>';
+  const actividades=d.actividades||[];
+  document.getElementById('physicsBox').innerHTML='<div class="box"><button class="back" onclick="openPhysics()">← Regresar</button><div class="eyebrow">'+escapeHtml(d.alumno.grupo)+' · FÍSICA · EN LÍNEA</div><h2>'+escapeHtml(d.alumno.nombre)+'</h2><div class="muted">Solo lectura · Información actualizada desde Google Sheets</div><div class="studentHead"><b>Avance acumulado</b><div class="percent">'+p+'%</div></div><div class="progress"><div class="bar" style="width:'+Math.min(p,100)+'%"></div></div>'+actividades.map(a=>{const cal=a.calificacion;const evaluada=a.evaluada===true;return '<div class="activity"><span>⚛️</span><div class="grow"><b>'+escapeHtml(a.actividad||'')+'</b><div class="muted">Valor: '+Number(a.porcentaje||0)+'%</div></div><span>'+(evaluada?'<b>'+Number(cal)+'/10</b>':'⬜')+'</span></div>';}).join('')+'</div>';
 }
 
 async function physicsTeacherLogin(){
