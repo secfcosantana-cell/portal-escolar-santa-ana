@@ -392,18 +392,13 @@ async function savePhysicsGrade(input){
   const idActividad=input.dataset.actividad;
   const asignacion=window.physicsCurrentAssignment;
 
-  if(value===''){
-    alert('Escribe una calificación de 0 a 10.');
-    input.focus();
-    return;
-  }
-
-  const grade=Number(value);
-
-  if(isNaN(grade)||grade<0||grade>10){
-    alert('La calificación debe ser un número de 0 a 10.');
-    input.focus();
-    return;
+  if(value!==''){
+    const grade=Number(value);
+    if(isNaN(grade)||grade<0||grade>10){
+      alert('La calificación debe ser un número de 0 a 10.');
+      input.focus();
+      return;
+    }
   }
 
   input.disabled=true;
@@ -430,13 +425,13 @@ async function savePhysicsGrade(input){
     );
 
     if(ev){
-      ev['Calificación']=grade;
-    }else{
+      ev['Calificación']=value===''?'':Number(value);
+    }else if(value!==''){
       ev={
         ID_Asignación:asignacion.idAsignacion,
         'No. lista':lista,
         ID_Actividad:idActividad,
-        Calificación:grade
+        Calificación:Number(value)
       };
       evs.push(ev);
       asignacion.evaluaciones=evs;
