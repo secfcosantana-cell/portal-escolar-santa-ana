@@ -93,3 +93,94 @@ function openPhysicsFromDirectory(){
   openPhysics();
   $('studentDirectory').classList.add('hidden');
 }
+
+
+/* ========================= BIOLOGÍA NUMÉRICA ========================= */
+
+const BIOLOGY_SCRIPT_URL='https://script.google.com/macros/s/AKfycby3xGQ-PxeVThLd_iUWqAuvc5Vzk6YyZd6VYS8ac2FH6wbLG-eloUbBDijxQhzic72v/exec';
+
+function studentLogin(){
+  const code=$('sg').value,n=$('sn').value,p=$('sp').value.trim(),msg=$('sm');
+  msg.textContent='Consultando...';
+  const u=BIOLOGY_SCRIPT_URL+'?action=student&grupo='+encodeURIComponent('1º '+code)+'&lista='+encodeURIComponent(n)+'&pin='+encodeURIComponent(p)+'&materia='+encodeURIComponent('Biología')+'&_='+Date.now();
+  jsonpBiology(u,function(d){
+    if(!d||!d.ok){msg.textContent=(d&&d.error)||'Datos incorrectos.';return;}
+    renderStudent(d);
+  },function(){msg.textContent='No se pudo conectar con Google Sheets de Biología.';});
+}
+
+function renderStudent(d){
+  const p=Number(d.porcentaje)||0;
+  const actividades=d.actividades||[];
+  $('studentBox').innerHTML='<div class="box"><button class="back" onclick="openStudent()">← Regresar</button><div class="eyebrow">'+escapeHtml(d.alumno.grupo)+' · BIOLOGÍA · EN LÍNEA</div><h2>'+escapeHtml(d.alumno.nombre)+'</h2><div class="muted">Solo lectura · Información actualizada desde Google Sheets</div><div class="studentHead"><b>Avance acumulado</b><div class="percent">'+p+'%</div></div><div class="progress"><div class="bar" style="width:'+Math.min(p,100)+'%"></div></div>'+actividades.map(a=>'<div class="activity"><span>'+activityIcon(a.idActividad)+'</span><div class="grow"><b>'+escapeHtml(a.actividad||'')+'</b><div class="muted">Valor de la actividad: '+Number(a.porcentaje||0)+'%</div></div><span class="activity-grade">'+(a.evaluada===true?'<b>Calificación: '+Number(a.calificacion)+'/10</b>':'<span class="muted">Sin calificar</span>')+'</span></div>').join('')+'</div>';
+}
+
+function activityIcon(id){
+  const icons={A1:'🧠',A2:'🔬',A3:'📘',A4:'🧫',A5:'🦠',A6:'📊',A7:'🤝',a1:'🧠',a2:'🔬',a3:'📘',a4:'🧫',a5:'🦠',a6:'📊',a7:'🤝'};
+  return icons[id]||'📌';
+}
+
+function teacherTable(){
+  if(!window.teacherData)return;
+  const g=$('tg').value;
+  const fullGroup='1º '+g;
+  const asignacion=(window.teacherData.asignaciones||[]).find(a=>normalizarBioGrupo_(a.grupo)===normalizarBioGrupo_(fullGroup));
+  if(!asignacion){$('table').innerHTML='<div class="box msg">No se encontró la asignación de Biología '+escapeHtml(fullGroup)+'.</div>';return;}
+  const students=asignacion.alumnos||[],evals=asignacion.evaluaciones||[];
+  const acts=(asignacion.actividades||[]).filter(a=>!['no','false','0'].includes(String(a.Activa??'').trim().toLowerCase()));
+  let html='<div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+biologyActivityWeight(a)+'%</span></th>').join('')+'<th>Total</th></tr></thead><tbody>';
+  students.forEach(st=>{
+    const lista=String(st.lista||'').trim();let total=0;
+    html+='<tr><td>'+escapeHtml(lista)+'. <b>'+escapeHtml(st.nombre||'')+'</b></td>';
+    acts.forEach(a=>{
+      const ev=evals.find(x=>String(x.ID_Asignación||'').trim()===String(asignacion.idAsignacion||'').trim()&&normalizarBioNumero_(x['No. lista']||x.No_Lista)===normalizarBioNumero_(lista)&&String(x.ID_Actividad||'').trim()===String(a.ID_Actividad||'').trim());
+      const raw=ev?.Calificación,has=raw!==null&&raw!==undefined&&String(raw).trim()!=='',grade=has?Number(raw):'';
+      if(has&&!isNaN(grade))total+=(grade/10)*biologyActivityWeight(a);
+      html+='<td><input class="biology-grade-input" type="number" min="0" max="10" step="0.1" value="'+(has?escapeHtml(String(grade)):'')+'" data-lista="'+escapeHtml(lista)+'" data-asignacion="'+escapeHtml(asignacion.idAsignacion||'')+'" data-actividad="'+escapeHtml(a.ID_Actividad||'')+'" onchange="saveBiologyGrade(this)" title="Calificación de 0 a 10"></td>';
+    });
+    total=Math.round(total*100)/100;
+    html+='<td class="total" id="biology-total-'+escapeHtml(lista)+'">'+total+'%</td></tr>';
+  });
+  html+='</tbody></table></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets.</p>';
+  $('table').innerHTML=html;
+}
+
+function saveBiologyGrade(input){
+  const value=input.value.trim(),lista=input.dataset.lista,idAsignacion=input.dataset.asignacion,idActividad=input.dataset.actividad;
+  if(value!==''){
+    const grade=Number(value);
+    if(isNaN(grade)||grade<0||grade>10){alert('La calificación debe ser un número de 0 a 10.');input.focus();return;}
+  }
+  input.disabled=true;
+  const u=BIOLOGY_SCRIPT_URL+'?action=save&pin='+encodeURIComponent(teacherPinSession)+'&idAsignacion='+encodeURIComponent(idAsignacion)+'&lista='+encodeURIComponent(lista)+'&idActividad='+encodeURIComponent(idActividad)+'&calificacion='+encodeURIComponent(value)+'&_='+Date.now();
+  jsonpBiology(u,function(d){
+    if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar la calificación.');input.disabled=false;return;}
+    const asig=(window.teacherData.asignaciones||[]).find(a=>String(a.idAsignacion)===String(idAsignacion));
+    const evs=asig?asig.evaluaciones:[];
+    const ev=evs.find(x=>String(x.ID_Asignación||'').trim()===String(idAsignacion).trim()&&normalizarBioNumero_(x['No. lista']||x.No_Lista)===normalizarBioNumero_(lista)&&String(x.ID_Actividad||'').trim()===String(idActividad).trim());
+    if(ev)ev['Calificación']=value===''?'':Number(value);
+    else if(value!=='')evs.push({ID_Asignación:idAsignacion,'No. lista':lista,ID_Actividad:idActividad,Calificación:Number(value)});
+    teacherTable();
+    input.disabled=false;
+  },function(){alert('No se pudo conectar con Google Sheets de Biología.');input.disabled=false;});
+}
+
+function biologyActivityWeight(a){
+  const value=a['Valor_%']??a['Valor %']??a['Porcentaje']??a['Valor']??0;
+  const n=Number(String(value).replace(',','.'));
+  return isNaN(n)?0:n;
+}
+function normalizarBioGrupo_(v){return String(v??'').trim().toUpperCase().replace(/\s+/g,' ').replace(/°/g,'º').replace(/\./g,'');}
+function normalizarBioNumero_(v){const t=String(v??'').trim().replace(/[^\d]/g,'');return t?String(Number(t)):'';}
+
+function jsonpBiology(url,onSuccess,onError){
+  const callbackName='biologyJsonp_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+  let finished=false;
+  const script=document.createElement('script');
+  const cleanup=()=>{if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName]}catch(e){window[callbackName]=undefined}};
+  const timer=setTimeout(()=>{if(finished)return;finished=true;cleanup();if(onError)onError(new Error('Tiempo de espera agotado.'));},30000);
+  window[callbackName]=data=>{if(finished)return;finished=true;clearTimeout(timer);cleanup();onSuccess(data)};
+  script.onerror=()=>{if(finished)return;finished=true;clearTimeout(timer);cleanup();if(onError)onError(new Error('No se pudo cargar Google Apps Script.'))};
+  script.src=url+(url.indexOf('?')>=0?'&':'?')+'callback='+encodeURIComponent(callbackName);
+  document.head.appendChild(script);
+}
