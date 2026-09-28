@@ -123,6 +123,8 @@ async function physicsTeacherLogin(){
       PHYSICS_STUDENT_SCRIPT_URL+
       '?action=all'+
       '&pin='+encodeURIComponent(pin)+
+      '&materia='+encodeURIComponent('Física')+
+      '&grupo='+encodeURIComponent('2º A')+
       '&_='+Date.now(),
       {cache:'no-store'}
     );
