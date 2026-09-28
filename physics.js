@@ -186,7 +186,6 @@ function postPhysicsSave(url){
     iframe.onload=function(){ finish(true); };
     iframe.onerror=function(){ finish(false); };
 
-    document.body.appendChild(form);
     form.submit();
 
     setTimeout(function(){ if(!done) finish(true); },2500);
@@ -223,12 +222,19 @@ async function physicsTeacherLogin(){
 
     jsonpPhysics(u,function(d){
       if(!d.ok){
-        throw new Error(d.error||'Error');
+        document.getElementById('physicsBox').innerHTML=
+          '<div class="box msg">No se pudo cargar el panel docente. '+
+          escapeHtml(d.error||'Error')+
+          '</div>';
+        return;
       }
       window.physicsTeacherData=d;
       renderPhysicsTeacher();
     },function(err){
-      throw new Error(err&&err.message ? err.message : 'No se pudo conectar con Google Apps Script.');
+      document.getElementById('physicsBox').innerHTML=
+        '<div class="box msg">No se pudo cargar el panel docente. '+
+        escapeHtml(err&&err.message ? err.message : 'Error de conexión.')+
+        '</div>';
     });
 
   }catch(e){
