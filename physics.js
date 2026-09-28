@@ -210,41 +210,71 @@ async function physicsTeacherLogin(){
   document.getElementById('physicsBox').innerHTML=
     '<div class="box">Cargando evaluaciones de Física...</div>';
 
-  try{
+  const callbackName='physicsTeacherCallback_'+Date.now();
 
-    const u=
-      PHYSICS_STUDENT_SCRIPT_URL+
-      '?action=all'+
-      '&pin='+encodeURIComponent(pin)+
-      '&materia='+encodeURIComponent('Física')+
-      '&grupo='+encodeURIComponent('2º A')+
-      '&_='+Date.now();
+  let script=null;
+  let timer=null;
+  let terminado=false;
 
-    jsonpPhysics(u,function(d){
-      if(!d.ok){
-        document.getElementById('physicsBox').innerHTML=
-          '<div class="box msg">No se pudo cargar el panel docente. '+
-          escapeHtml(d.error||'Error')+
-          '</div>';
-        return;
-      }
-      window.physicsTeacherData=d;
-      renderPhysicsTeacher();
-    },function(err){
+  function limpiar(){
+    if(timer)clearTimeout(timer);
+    if(script && script.parentNode)script.parentNode.removeChild(script);
+    try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}
+  }
+
+  window[callbackName]=function(d){
+
+    if(terminado)return;
+    terminado=true;
+
+    limpiar();
+
+    if(!d || !d.ok){
       document.getElementById('physicsBox').innerHTML=
         '<div class="box msg">No se pudo cargar el panel docente. '+
-        escapeHtml(err&&err.message ? err.message : 'Error de conexión.')+
+        escapeHtml((d&&d.error)||'Respuesta inválida de Google Apps Script.')+
         '</div>';
-    });
+      return;
+    }
 
-  }catch(e){
+    window.physicsTeacherData=d;
+    renderPhysicsTeacher();
+  };
+
+  script=document.createElement('script');
+
+  script.onerror=function(){
+    if(terminado)return;
+    terminado=true;
+    limpiar();
+
+    document.getElementById('physicsBox').innerHTML=
+      '<div class="box msg">No se pudo conectar con Google Apps Script.</div>';
+  };
+
+  const url=
+    PHYSICS_STUDENT_SCRIPT_URL+
+    '?action=all'+
+    '&pin='+encodeURIComponent(pin)+
+    '&materia='+encodeURIComponent('Física')+
+    '&grupo='+encodeURIComponent('2º A')+
+    '&callback='+encodeURIComponent(callbackName)+
+    '&_='+Date.now();
+
+  script.src=url;
+  document.head.appendChild(script);
+
+  timer=setTimeout(function(){
+    if(terminado)return;
+    terminado=true;
+    limpiar();
 
     document.getElementById('physicsBox').innerHTML=
       '<div class="box msg">'+
-      'No se pudo cargar el panel docente. '+
-      escapeHtml(e.message||'')+
+      'La conexión con Google Apps Script tardó demasiado. '+
+      'El servicio respondió correctamente en la prueba directa, por lo que vuelve a intentar actualizar la página.'+
       '</div>';
-  }
+  },20000);
 }
 
 
