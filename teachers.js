@@ -51,11 +51,7 @@ function openFranciscoGroup(group){
   }else if(group.startsWith('Física')){
     $('teacherDirectory').classList.add('hidden');
     $('physics').classList.remove('hidden');
-    $('physicsBox').innerHTML='<div class="box">Cargando evaluaciones de Física...</div>';
-    const pin=teacherPinSession||TEACHER_PIN;
-    fetch(PHYSICS_SCRIPT_URL+'?action=all&teacherPin='+encodeURIComponent(pin)+'&_='+Date.now(),{cache:'no-store'})
-      .then(r=>r.json()).then(d=>{if(!d.ok)throw new Error(d.error||'Error');window.physicsTeacherData=d;renderPhysicsTeacher();})
-      .catch(()=>{$('physicsBox').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de Física.</div>';});
+    physicsTeacherLogin();
   }
 }
 
