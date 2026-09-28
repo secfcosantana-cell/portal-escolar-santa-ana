@@ -40,14 +40,19 @@ function openFranciscoGroup(group){
     $('teacherDirectory').classList.add('hidden');
     $('teacher').classList.remove('hidden');
     const code=group.includes('A')?'A':group.includes('B')?'B':'C';
-    $('teacher').querySelector('h2').innerHTML='Panel docente · Biología <span class="muted">· '+escapeHtml(group.split('·')[1].trim())+' · EN LÍNEA</span>';
+    $('teacher').querySelector('h2').innerHTML='Panel docente · Biología <span class="muted">· 1.º '+code+' · EN LÍNEA</span>';
     $('tg').innerHTML=['A','B','C'].map(x=>'<option value="'+x+'">'+x+'</option>').join('');
     $('tg').value=code;
-    $('table').innerHTML='<div class="box">Cargando evaluaciones desde Google Sheets...</div>';
+    $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
     const pin=teacherPinSession||TEACHER_PIN;
-    fetch(GOOGLE_SCRIPT_URL+'?action=all&teacherPin='+encodeURIComponent(pin)+'&_='+Date.now(),{cache:'no-store'})
-      .then(r=>r.json()).then(d=>{if(!d.ok)throw new Error(d.error||'Error');window.teacherData=d;teacherTable();})
-      .catch(()=>{$('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de Biología.</div>';});
+    const url=BIOLOGY_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(pin)+'&materia='+encodeURIComponent('Biología')+'&_='+Date.now();
+    jsonpBiology(url,function(d){
+      if(!d||!d.ok){$('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar Biología.')+'</div>';return;}
+      window.teacherData=d;
+      teacherTable();
+    },function(){
+      $('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de Biología.</div>';
+    });
   }else if(group.startsWith('Física')){
     $('teacherDirectory').classList.add('hidden');
     $('physics').classList.remove('hidden');
