@@ -51,15 +51,15 @@ async function physicsStudentLogin(){
       '&materia=Física'+
       '&_='+Date.now();
 
-    const r=await fetch(u,{cache:'no-store'});
-    const d=await r.json();
-
-    if(!d.ok){
-      msg.textContent=d.error||'Datos incorrectos.';
-      return;
-    }
-
-    renderPhysicsStudent(d);
+    jsonpPhysics(u,function(d){
+      if(!d.ok){
+        msg.textContent=d.error||'Datos incorrectos.';
+        return;
+      }
+      renderPhysicsStudent(d);
+    },function(err){
+      msg.textContent='No se pudo conectar con Google Sheets de Física.';
+    });
 
   }catch(e){
     msg.textContent='No se pudo conectar con Google Sheets de Física.';
@@ -100,6 +100,100 @@ function renderPhysicsStudent(d){
 
 
 /************************************************************
+ * COMUNICACIÓN CON APPS SCRIPT
+ * Las consultas de lectura usan JSONP para evitar el problema
+ * de CORS/redirección de ContentService desde GitHub Pages.
+ ************************************************************/
+function jsonpPhysics(url,onSuccess,onError){
+  const callbackName='physicsJsonp_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+  let finished=false;
+  const script=document.createElement('script');
+
+  const cleanup=function(){
+    if(script.parentNode) script.parentNode.removeChild(script);
+    try{ delete window[callbackName]; }catch(e){ window[callbackName]=undefined; }
+  };
+
+  const timer=setTimeout(function(){
+    if(finished)return;
+    finished=true;
+    cleanup();
+    if(onError)onError(new Error('Tiempo de espera agotado al consultar Google Apps Script.'));
+  },30000);
+
+  window[callbackName]=function(data){
+    if(finished)return;
+    finished=true;
+    clearTimeout(timer);
+    cleanup();
+    onSuccess(data);
+  };
+
+  script.onerror=function(){
+    if(finished)return;
+    finished=true;
+    clearTimeout(timer);
+    cleanup();
+    if(onError)onError(new Error('No se pudo cargar la respuesta de Google Apps Script.'));
+  };
+
+  script.src=url+
+    (url.indexOf('?')>=0?'&':'?')+
+    'callback='+encodeURIComponent(callbackName);
+
+  document.head.appendChild(script);
+}
+
+function postPhysicsSave(url){
+  return new Promise(function(resolve,reject){
+    const frameName='physicsSaveFrame_'+Date.now();
+    const iframe=document.createElement('iframe');
+    iframe.name=frameName;
+    iframe.style.display='none';
+    document.body.appendChild(iframe);
+
+    const form=document.createElement('form');
+    form.method='POST';
+    form.action=PHYSICS_STUDENT_SCRIPT_URL;
+    form.target=frameName;
+    form.style.display='none';
+
+    const query=url.split('?')[1]||'';
+    const params=new URLSearchParams(query);
+
+    params.forEach(function(value,key){
+      const input=document.createElement('input');
+      input.type='hidden';
+      input.name=key;
+      input.value=value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+
+    let done=false;
+    const finish=function(ok){
+      if(done)return;
+      done=true;
+      setTimeout(function(){
+        if(form.parentNode)form.parentNode.removeChild(form);
+        if(iframe.parentNode)iframe.parentNode.removeChild(iframe);
+      },300);
+      if(ok)resolve();
+      else reject(new Error('No se pudo enviar la calificación a Google Sheets.'));
+    };
+
+    iframe.onload=function(){ finish(true); };
+    iframe.onerror=function(){ finish(false); };
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(function(){ if(!done) finish(true); },2500);
+  });
+}
+
+/************************************************************
  * ACCESO DOCENTE
  ************************************************************/
 
@@ -119,25 +213,23 @@ async function physicsTeacherLogin(){
 
   try{
 
-    const r=await fetch(
+    const u=
       PHYSICS_STUDENT_SCRIPT_URL+
       '?action=all'+
       '&pin='+encodeURIComponent(pin)+
       '&materia='+encodeURIComponent('Física')+
       '&grupo='+encodeURIComponent('2º A')+
-      '&_='+Date.now(),
-      {cache:'no-store'}
-    );
+      '&_='+Date.now();
 
-    const d=await r.json();
-
-    if(!d.ok){
-      throw new Error(d.error||'Error');
-    }
-
-    window.physicsTeacherData=d;
-
-    renderPhysicsTeacher();
+    jsonpPhysics(u,function(d){
+      if(!d.ok){
+        throw new Error(d.error||'Error');
+      }
+      window.physicsTeacherData=d;
+      renderPhysicsTeacher();
+    },function(err){
+      throw new Error(err&&err.message ? err.message : 'No se pudo conectar con Google Apps Script.');
+    });
 
   }catch(e){
 
@@ -291,12 +383,7 @@ async function savePhysicsGrade(input){
       '&calificacion='+encodeURIComponent(grade)+
       '&_='+Date.now();
 
-    const r=await fetch(u,{cache:'no-store'});
-    const d=await r.json();
-
-    if(!d.ok){
-      throw new Error(d.error||'No se pudo guardar.');
-    }
+    await postPhysicsSave(u);
 
     const evs=asignacion.evaluaciones||[];
 
