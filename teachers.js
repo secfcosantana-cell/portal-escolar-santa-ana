@@ -97,7 +97,7 @@ function openPhysicsFromDirectory(){
 
 /* ========================= BIOLOGÍA NUMÉRICA ========================= */
 
-const BIOLOGY_SCRIPT_URL='https://script.google.com/macros/s/AKfycby3xGQ-PxeVThLd_iUWqAuvc5Vzk6YyZd6VYS8ac2FH6wbLG-eloUbBDijxQhzic72v/exec';
+const BIOLOGY_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxYs9ZEvfvly_HwWNubtrXCPquZ9Eyln4ZQkhU3qwgbuzjNgwyomFFvhrzV0DgiHE52Fw/exec';
 
 function studentLogin(){
   const code=$('sg').value,n=$('sn').value,p=$('sp').value.trim(),msg=$('sm');
