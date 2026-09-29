@@ -1,4 +1,4 @@
-const PHYSICS_STUDENT_SCRIPT_URL='https://script.google.com/macros/s/AKfycby3xGQ-PxeVThLd_iUWqAuvc5Vzk6YyZd6VYS8ac2FH6wbLG-eloUbBDijxQhzic72v/exec';
+const PHYSICS_STUDENT_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxYs9ZEvfvly_HwWNubtrXCPquZ9Eyln4ZQkhU3qwgbuzjNgwyomFFvhrzV0DgiHE52Fw/exec';
 let physicsTeacherPinSession='';
 
 function openPhysics(){
@@ -411,7 +411,7 @@ async function savePhysicsGrade(input){
       '&idAsignacion='+encodeURIComponent(asignacion.idAsignacion)+
       '&lista='+encodeURIComponent(lista)+
       '&idActividad='+encodeURIComponent(idActividad)+
-      '&calificacion='+encodeURIComponent(grade)+
+      '&calificacion='+encodeURIComponent(value)+
       '&_='+Date.now();
 
     await postPhysicsSave(u);
