@@ -117,8 +117,9 @@ function openGenericTeacherGroup(teacherId,groupLabel){
   generalTeacherSubject=t.role;generalTeacherData=null;generalTeacherAssignment=null;
   $('teacherDirectory').classList.add('hidden');$('teacher').classList.remove('hidden');
   $('teacher').querySelector('h2').innerHTML='Panel docente · '+escapeHtml(t.role)+' <span class="muted">· '+escapeHtml(groupLabel.split(' · ')[1]||groupLabel)+' · EN LÍNEA</span>';
-  $('tg').innerHTML=(GENERAL_SUBJECT_GROUPS[t.role]||[]).map(g=>'<option value="'+escapeHtml(g)+'">'+escapeHtml(g)+'</option>').join('');
-  $('tg').value=groupLabel.split(' · ')[1]||groupLabel;
+  const selectedGeneralGroup=groupLabel.split(' · ')[1]||groupLabel;
+  $('tg').innerHTML='<option value="'+escapeHtml(selectedGeneralGroup)+'">'+escapeHtml(selectedGeneralGroup)+'</option>';
+  $('tg').value=selectedGeneralGroup;
   $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
   const oldManager=$('generalActivityManager');if(oldManager)oldManager.remove();
   $('tg').insertAdjacentHTML('afterend','<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button></div>');
