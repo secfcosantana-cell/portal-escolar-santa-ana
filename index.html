@@ -70,17 +70,39 @@ async function installPortal(){
 </script><script>
 function showParentAccess(){alert('El acceso para Padres de Familia se habilitará próximamente.')}
 </script><script>
-function hideLanding(){document.querySelector('.hero-target')?.classList.add('hidden');document.querySelector('.hero-footer')?.classList.add('hidden');document.querySelector('.welcome-strip')?.classList.add('hidden');document.querySelector('.resource-launch')?.classList.add('hidden');}
-function landing(){home();document.querySelector('.hero-target')?.classList.remove('hidden');document.querySelector('.hero-footer')?.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
-window.addEventListener('load',()=>{document.getElementById('installBtn')?.classList.remove('hidden');});
-function showAbout(){alert("Escuela Secundaria General Santa Ana Bathá · Chilcuautla, Hidalgo.");}
-function showContact(){alert("Contacto escolar: utiliza el acceso docente o la dirección de la escuela para comunicación institucional.");}\nfunction portalOpenStudents(){if(typeof window.openStudentDirectory==="function"){window.openStudentDirectory();return;}alert("El módulo de alumnos todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.");}\nfunction portalOpenTeachers(){if(typeof window.teacher==="function"){window.teacher();return;}alert("El módulo docente todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.");}
+function hideLanding(){
+  document.querySelector('.hero-target')?.classList.add('hidden');
+  document.querySelector('.hero-footer')?.classList.add('hidden');
+  document.querySelector('.welcome-strip')?.classList.add('hidden');
+  document.querySelector('.resource-launch')?.classList.add('hidden');
+}
+function landing(){
+  home();
+  document.querySelector('.hero-target')?.classList.remove('hidden');
+  document.querySelector('.hero-footer')?.classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showAbout(){
+  alert("Escuela Secundaria General Santa Ana Bathá · Chilcuautla, Hidalgo.");
+}
+function showContact(){
+  alert("Contacto escolar: utiliza el acceso docente o la dirección de la escuela para comunicación institucional.");
+}
 function portalOpenStudents(){
-  if(typeof window.openStudentDirectory==='function'){window.openStudentDirectory();return;}
-  alert('El módulo de alumnos todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.');
+  if(typeof window.openStudentDirectory === 'function'){
+    window.openStudentDirectory();
+  }else{
+    alert("El módulo de alumnos todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.");
+  }
 }
 function portalOpenTeachers(){
-  if(typeof window.teacher==='function'){window.teacher();return;}
-  alert('El módulo docente todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.');
+  if(typeof window.teacher === 'function'){
+    window.teacher();
+  }else{
+    alert("El módulo docente todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.");
+  }
 }
+window.addEventListener('load',()=>{
+  document.getElementById('installBtn')?.classList.remove('hidden');
+});
 </script></body></html>
