@@ -176,7 +176,7 @@ function loadGeneralActivityManager(){
 }
 function renderGeneralActivityManager(all){
   const body=$('generalAdminBody');if(!body)return;
-  const period=generalActivityPeriod,current=String(window.generalCurrentPeriod||'1'),acts=(all||[]).filter(a=>String(a.periodo??a.Periodo??'1').replace(/^Periodo\s*/i,'')===String(period));
+  const period=generalActivityPeriod,current=String(window.generalCurrentPeriod||'1'),currentAsig=String(generalTeacherAssignment?.idAsignacion||'').trim(),acts=(all||[]).filter(a=>String(a.periodo??a.Periodo??'1').replace(/^Periodo\s*/i,'')===String(period)&&(!currentAsig||String(a.idAsignacion||a.ID_Asignación||'').trim()===currentAsig));
   const total=acts.filter(a=>a.activa===true||['si','sí','true','1'].includes(String(a.activa??a.Activa??'').trim().toLowerCase())).reduce((s,a)=>s+Number(a.porcentaje??a.Porcentaje??a['Valor_%']??0),0);
   const disponible=Math.max(0,100-total);
   let html='<div class="teacher-note"><b>Periodo '+escapeHtml(period)+'</b> · Total activo: '+Math.round(total*100)/100+'% · Disponible: '+Math.round(disponible*100)/100+'%'+(String(period)===current?' · 🟢 ACTUAL':'')+'</div>';
@@ -189,8 +189,8 @@ function renderGeneralActivityManager(all){
 }
 function setGeneralCurrentPeriod(periodo){if(!confirm('¿Cambiar el periodo actual de '+generalTeacherSubject+' al Periodo '+periodo+'?'))return;activityAdminGeneral('setCurrentPeriod',{periodo:periodo});}
 function addGeneralActivity(){const n=$('generalNewActivity')?.value.trim(),p=$('generalNewPct')?.value.trim();if(!n||!p){alert('Escribe el nombre y el porcentaje.');return;}activityAdminGeneral('add',{actividad:n,porcentaje:p,periodo:generalActivityPeriod});}
-function editGeneralActivity(id,nombre,pct){const n=prompt('Nombre de la actividad:',nombre);if(n===null)return;const p=prompt('Porcentaje:',pct);if(p===null)return;activityAdminGeneral('edit',{idActividad:id,actividad:n,porcentaje:p});}
-function toggleGeneralActivity(id,activa){activityAdminGeneral('toggle',{idActividad:id,activa:String(activa)});}
+function editGeneralActivity(id,nombre,pct){const n=prompt('Nombre de la actividad:',nombre);if(n===null)return;const p=prompt('Porcentaje:',pct);if(p===null)return;activityAdminGeneral('edit',{idActividad:id,idAsignacion:generalTeacherAssignment?.idAsignacion||'',actividad:n,porcentaje:p});}
+function toggleGeneralActivity(id,activa){activityAdminGeneral('toggle',{idActividad:id,idAsignacion:generalTeacherAssignment?.idAsignacion||'',activa:String(activa)});}
 function activityAdminGeneral(op,extra){
   const params=Object.assign({action:'activityAdmin',op:op,pin:teacherPinSession||TEACHER_PIN,materia:generalTeacherSubject,grupo:$('tg')?.value||'',_:Date.now()},extra||{});
   const u=GENERAL_SCHOOL_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
