@@ -379,3 +379,19 @@ header{
 .resource-empty p{max-width:700px;margin:8px auto;line-height:1.55}
 @media(max-width:800px){.hero-school-badge{width:300px;min-width:0}.resource-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.hero-school-badge{width:100%;margin-top:15px}.hero-school-badge img{width:70px!important;height:70px!important}.resource-launch{flex-direction:column;align-items:stretch}.resource-launch button{width:100%}.resource-head{align-items:flex-start;flex-direction:column}.resource-grid{grid-template-columns:1fr}}
+
+/* ===== CORRECCIÓN VISUAL FINAL 2026 =====
+   Elimina la onda verde heredada del diseño anterior.
+*/
+body:before{
+  background:linear-gradient(180deg,#dbe5ee,#c7d5e1)!important;
+  box-shadow:0 -35px 0 rgba(255,255,255,.72),0 -70px 0 rgba(154,176,196,.16)!important;
+  opacity:.72!important;
+}
+body{
+  background:
+    radial-gradient(circle at 8% 12%,rgba(49,95,133,.10),transparent 24%),
+    radial-gradient(circle at 92% 20%,rgba(91,112,150,.09),transparent 25%),
+    linear-gradient(135deg,#f7f9fc 0%,#eef3f8 48%,#f8fafc 100%)!important;
+}
+footer{color:#526d82!important}
