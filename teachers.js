@@ -204,12 +204,16 @@ function closeGeneralActivityManager(){
 }
 function loadGeneralActivityManager(){
   const body=$('generalAdminBody');if(!body)return;body.innerHTML='<div class="muted">Cargando actividades...</div>';
-  const u=GENERAL_SCHOOL_SCRIPT_URL+'?action=activityAdmin&op=list&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(generalTeacherSubject)+'&_='+Date.now();
+  const idAsignacion=String(generalTeacherAssignment?.idAsignacion||'').trim();
+  if(!idAsignacion){body.innerHTML='<div class="msg">No se pudo identificar la asignación exacta de este grupo. No se cargarán actividades para evitar mezclar grupos.</div>';return;}
+  const u=GENERAL_SCHOOL_SCRIPT_URL+'?action=activityAdmin&op=list&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(generalTeacherSubject)+'&idAsignacion='+encodeURIComponent(idAsignacion)+'&grupo='+encodeURIComponent($('tg')?.value||'')+'&_='+Date.now();
   jsonpBiology(u,function(d){if(!d||!d.ok){body.innerHTML='<div class="msg">'+escapeHtml((d&&d.error)||'No se pudo cargar el catálogo.')+'</div>';return;}window.generalCurrentPeriod=String(d.periodoActual||'1');renderGeneralActivityManager(d.actividades||[]);},function(){body.innerHTML='<div class="msg">No se pudo conectar con Google Sheets.</div>';});
 }
 function renderGeneralActivityManager(all){
   const body=$('generalAdminBody');if(!body)return;
-  const period=generalActivityPeriod,current=String(window.generalCurrentPeriod||'1'),currentAsig=String(generalTeacherAssignment?.idAsignacion||'').trim(),acts=(all||[]).filter(a=>String(a.periodo??a.Periodo??'1').replace(/^Periodo\s*/i,'')===String(period)&&(!currentAsig||String(a.idAsignacion||a.ID_Asignación||'').trim()===currentAsig));
+  const period=generalActivityPeriod,current=String(window.generalCurrentPeriod||'1'),currentAsig=String(generalTeacherAssignment?.idAsignacion||'').trim();
+  if(!currentAsig){body.innerHTML='<div class="msg">No se pudo identificar la asignación exacta de este grupo. No se mostrarán actividades.</div>';return;}
+  const acts=(all||[]).filter(a=>String(a.periodo??a.Periodo??'1').replace(/^Periodo\s*/i,'')===String(period)&&String(a.idAsignacion||a.ID_Asignación||'').trim()===currentAsig);
   const total=acts.filter(a=>a.activa===true||['si','sí','true','1'].includes(String(a.activa??a.Activa??'').trim().toLowerCase())).reduce((s,a)=>s+Number(a.porcentaje??a.Porcentaje??a['Valor_%']??0),0);
   const disponible=Math.max(0,100-total);
   let html='<div class="teacher-note"><b>Periodo '+escapeHtml(period)+'</b> · Total activo: '+Math.round(total*100)/100+'% · Disponible: '+Math.round(disponible*100)/100+'%'+(String(period)===current?' · 🟢 ACTUAL':'')+'</div>';
