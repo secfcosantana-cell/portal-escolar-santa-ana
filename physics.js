@@ -400,7 +400,13 @@ function openPhysicsActivityManager(){
 
 function closePhysicsActivityManager(){
   const box=document.getElementById('physicsActivityManager');
-  if(box)box.innerHTML='';
+  if(box){
+    box.innerHTML=
+      '<div class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">'+
+        '<span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span>'+
+        '<button class="secondary" onclick="openPhysicsActivityManager()">⚙️ Administrar actividades</button>'+
+      '</div>';
+  }
 }
 
 function loadPhysicsActivityManager(){
@@ -456,13 +462,51 @@ function togglePhysicsActivity(id,activa){
   activityAdminPhysics('toggle',{idActividad:id,activa:String(activa)});
 }
 function activityAdminPhysics(op,extra){
-  const params=Object.assign({action:'activityAdmin',op:op,pin:physicsTeacherPinSession||'2468',materia:'Física',_:Date.now()},extra||{});
-  const u=PHYSICS_STUDENT_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+  const params=Object.assign({
+    action:'activityAdmin',
+    op:op,
+    pin:physicsTeacherPinSession||'2468',
+    materia:'Física',
+    _:Date.now()
+  },extra||{});
+
+  const u=PHYSICS_STUDENT_SCRIPT_URL+'?'+
+    Object.keys(params).map(k=>
+      encodeURIComponent(k)+'='+encodeURIComponent(params[k])
+    ).join('&');
+
   jsonpPhysics(u,function(d){
-    if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar el cambio.');return;}
+    if(!d||!d.ok){
+      alert((d&&d.error)||'No se pudo guardar el cambio.');
+      return;
+    }
+
+    // Igual que Biología: actualizar el administrador y recargar
+    // todos los datos de Física para que las actividades nuevas
+    // aparezcan inmediatamente en la tabla de captura.
     loadPhysicsActivityManager();
-    renderPhysicsTeacher();
-  },function(){alert('No se pudo conectar con Google Sheets.');});
+
+    const refreshUrl=
+      PHYSICS_STUDENT_SCRIPT_URL+
+      '?action=all'+
+      '&pin='+encodeURIComponent(physicsTeacherPinSession||'2468')+
+      '&materia='+encodeURIComponent('Física')+
+      '&grupo='+encodeURIComponent('2º A')+
+      '&_='+Date.now();
+
+    jsonpPhysics(refreshUrl,function(fresh){
+      if(fresh&&fresh.ok){
+        window.physicsTeacherData=fresh;
+      }
+      renderPhysicsTeacher();
+    },function(){
+      // Si la recarga falla, conservamos los datos actuales.
+      renderPhysicsTeacher();
+    });
+
+  },function(){
+    alert('No se pudo conectar con Google Sheets.');
+  });
 }
 
 /************************************************************
