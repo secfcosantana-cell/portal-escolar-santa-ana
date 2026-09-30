@@ -8,6 +8,7 @@ const TEACHER_DIRECTORY=[
 ];
 
 function teacher(){
+  hideLanding();
   const pin=prompt('PIN docente:');
   if(pin!==TEACHER_PIN){alert('PIN docente incorrecto.');return;}
   teacherPinSession=pin;
@@ -68,6 +69,7 @@ function teacherPending(group){
 }
 
 function openStudentDirectory(){
+  hideLanding();
   home();
   $('home').classList.add('hidden');
   $('studentDirectory').classList.remove('hidden');
@@ -89,10 +91,12 @@ function openStudentTeacher(id){
 }
 
 function openStudentFromDirectory(){
+  hideLanding();
   openStudent();
   $('studentDirectory').classList.add('hidden');
 }
 function openPhysicsFromDirectory(){
+  hideLanding();
   openPhysics();
   $('studentDirectory').classList.add('hidden');
 }
