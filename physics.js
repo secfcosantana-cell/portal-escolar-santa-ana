@@ -462,18 +462,8 @@ function togglePhysicsActivity(id,activa){
   activityAdminPhysics('toggle',{idActividad:id,activa:String(activa)});
 }
 function activityAdminPhysics(op,extra){
-  const params=Object.assign({
-    action:'activityAdmin',
-    op:op,
-    pin:physicsTeacherPinSession||'2468',
-    materia:'Física',
-    _:Date.now()
-  },extra||{});
-
-  const u=PHYSICS_STUDENT_SCRIPT_URL+'?'+
-    Object.keys(params).map(k=>
-      encodeURIComponent(k)+'='+encodeURIComponent(params[k])
-    ).join('&');
+  const params=Object.assign({action:'activityAdmin',op:op,pin:physicsTeacherPinSession||'2468',materia:'Física',_:Date.now()},extra||{});
+  const u=PHYSICS_STUDENT_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
 
   jsonpPhysics(u,function(d){
     if(!d||!d.ok){
@@ -481,13 +471,11 @@ function activityAdminPhysics(op,extra){
       return;
     }
 
-    // Igual que Biología: actualizar el administrador y recargar
-    // todos los datos de Física para que las actividades nuevas
-    // aparezcan inmediatamente en la tabla de captura.
     loadPhysicsActivityManager();
 
-    const refreshUrl=
-      PHYSICS_STUDENT_SCRIPT_URL+
+    // Recargar la información completa para que las actividades nuevas,
+    // porcentajes y cambios de estado aparezcan inmediatamente en la captura.
+    const refreshUrl=PHYSICS_STUDENT_SCRIPT_URL+
       '?action=all'+
       '&pin='+encodeURIComponent(physicsTeacherPinSession||'2468')+
       '&materia='+encodeURIComponent('Física')+
@@ -500,7 +488,6 @@ function activityAdminPhysics(op,extra){
       }
       renderPhysicsTeacher();
     },function(){
-      // Si la recarga falla, conservamos los datos actuales.
       renderPhysicsTeacher();
     });
 
