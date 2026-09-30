@@ -558,3 +558,24 @@ body{min-height:100svh;overflow-x:hidden}
   .hero-target .hero-access button{min-height:68px!important}
   .hero-target .hero-copy p{font-size:.78rem!important}
 }
+
+
+/* ===== v40 · NAVEGACIÓN REALMENTE FULLSCREEN + INSTALACIÓN MÓVIL ===== */
+.hero-target.hidden,.hero-footer.hidden{display:none!important}
+.portal-section{min-height:calc(100svh - 118px)!important;width:100%!important;margin:0!important;padding:14px clamp(12px,4vw,64px) 40px!important;background:#f5f8fb!important}
+.portal-section:before{background:linear-gradient(rgba(248,251,253,.96),rgba(248,251,253,.96))!important}
+.portal-section .section-homebar{width:min(1240px,100%);margin:0 auto 14px!important}
+.portal-section .section-homebar .back{position:sticky;top:8px;z-index:30}
+.header-actions #installBtn.install-visible{display:inline-flex!important;align-items:center!important}
+@media(max-width:800px){
+  .site-header .header-actions{display:flex!important;position:absolute!important;right:10px!important;top:9px!important}
+  .site-header .header-actions #installBtn{display:inline-flex!important}
+  .site-header .header-actions .ghost:last-child{display:none!important}
+}
+@media(max-width:600px){
+  .site-header .header-actions{right:8px!important;top:7px!important}
+  .site-header .header-actions #installBtn{font-size:.68rem!important;padding:7px 9px!important}
+  .site-header .brand{padding-right:92px!important}
+  .portal-section{min-height:calc(100svh - 78px)!important;padding:10px 10px 28px!important}
+  .portal-section .section-homebar{justify-content:flex-start!important}
+}
