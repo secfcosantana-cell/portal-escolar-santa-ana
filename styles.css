@@ -753,3 +753,13 @@ body{min-height:100svh;overflow-x:hidden}
   background-repeat:no-repeat!important;
 }
 .hero-target::before,.hero-target::after{display:none!important;}
+
+
+/* v66 · Estados de actividades: conservar verde para activas y rojo para inactivas */
+.activity-status{display:inline-flex;align-items:center;gap:5px;font-weight:800;border-radius:999px;padding:6px 10px;white-space:nowrap}
+.activity-status-active{color:#176b3a;background:#e4f5ea;border:1px solid #9bd3ae}
+.activity-status-inactive{color:#a32929;background:#fde7e7;border:1px solid #e3aaaa}
+.activity-toggle-btn{border:0;border-radius:10px;padding:9px 12px;font:inherit;font-weight:800;cursor:pointer}
+.activity-toggle-active{color:#9b2424;background:#fde2e2;border:1px solid #e0a2a2}
+.activity-toggle-inactive{color:#176b3a;background:#e2f4e8;border:1px solid #9bcfaf}
+.activity-toggle-btn:hover{filter:brightness(.97);transform:translateY(-1px)}
