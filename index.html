@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#003c32">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=34">
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=36">
 <title>Portal Escolar</title>
 </head>
 <body>
@@ -12,28 +12,31 @@
 <h1>Escuela Secundaria</h1><p>Santa Ana Batha · Chilcuautla</p><label>Contraseña general</label>
 <input id="pw" type="password"><button class="primary" onclick="enter()">Entrar</button><div id="msg" class="msg"></div>
 </div></div>
-<div id="app" class="hidden"><header><div class="brand"><img src="./assets/logo-santa-ana.svg" alt="Logo oficial"><div><b>Portal Escolar</b><span>2026–2027</span></div></div>
+<div id="app" class="hidden"><header class="site-header"><div class="brand"><img src="./assets/logo-santa-ana.svg" alt="Logo oficial de la escuela"><div class="school-brand-text"><span>Escuela Secundaria General</span><b>Santa Ana Bathá</b><small>Chilcuautla, Hidalgo</small></div></div>
+<nav class="main-nav" aria-label="Navegación principal"><button class="nav-active" onclick="home()">⌂ <span>Inicio</span></button><button onclick="showAbout()">♟ <span>Acerca de</span></button><button onclick="openResources()">▤ <span>Recursos</span></button><button onclick="showContact()">✉ <span>Contacto</span></button></nav>
 <div class="header-actions"><button id="installBtn" class="ghost" onclick="installPortal()">📲 Instalar</button><button class="ghost" onclick="location.reload()">Salir</button></div></header>
-<main><section class="hero">
+<main><section class="hero hero-target">
   <div class="hero-copy">
     <div class="eyebrow">ESCUELA SECUNDARIA GENERAL SANTA ANA BATHÁ</div>
-    <h2>Portal Escolar</h2>
-    <p>Un espacio digital para aprender, organizarnos y fortalecer nuestra comunidad educativa.</p>
+    <h2>Bienvenido al<br><strong>Portal Escolar</strong></h2>
+    <div class="gold-rule"></div>
+    <h3>Escuela Secundaria General Santa Ana Bathá</h3>
+    <div class="gold-rule short"></div>
+    <p>Un espacio digital para aprender, organizarnos y fortalecer<br class="desktop-only"> nuestra comunidad educativa.</p>
   </div>
-  <div class="hero-school-badge"><img src="./assets/logo-santa-ana.svg" alt="Escudo oficial de la escuela"></div>
   <div class="hero-access">
-    <button onclick="openStudentDirectory()"><span>👥</span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
-    <button onclick="teacher()"><span>🧑‍🏫</span><b>Acceso<br>Docentes</b><strong>›</strong></button>
-    <button onclick="showParentAccess()"><span>👨‍👩‍👧</span><b>Acceso<br>Padres de Familia</b><strong>›</strong></button>
-    <button onclick="openResources()"><span>📄</span><b>Recursos<br>Educativos</b><strong>›</strong></button>
+    <button onclick="openStudentDirectory()"><span class="access-icon">👥</span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
+    <button onclick="teacher()"><span class="access-icon">🧑‍🏫</span><b>Acceso<br>Docentes</b><strong>›</strong></button>
+    <button onclick="showParentAccess()"><span class="access-icon">👨‍👩‍👧</span><b>Acceso<br>Padres de Familia</b><strong>›</strong></button>
+    <button onclick="openResources()"><span class="access-icon">📄</span><b>Recursos<br>Educativos</b><strong>›</strong></button>
   </div>
 </section>
-<div class="hero-footer"><span>📍 Santa Ana Bathá, Chilcuautla, Hidalgo</span><span>📖 <b>Educación para un mejor futuro</b></span></div>
-<section class="welcome-strip">
+<div class="hero-footer"><span>📍 Santa Ana Bathá, Chilcuautla, Hidalgo</span><span>▱ <b>Educación para un mejor futuro</b></span></div>
+<section class="welcome-strip hidden">
   <div><span class="mini-label">BIENVENIDA</span><h3>Tu escuela también está en línea</h3><p>Consulta tus actividades y evaluaciones desde computadora, tableta o teléfono.</p></div>
   <div class="school-mark"><b>SAB</b><span>2026–2027</span></div>
 </section>
-<div class="resource-launch"><div><b>📚 Recursos educativos</b><span>PDF, videos, páginas educativas y materiales descargables por materia.</span></div><button class="secondary" onclick="openResources()">Abrir recursos →</button></div><section id="home"><div class="section-title"><div><div class="mini-label">DOCENTE</div><h2>Consulta de actividades</h2><p>Selecciona a tu docente para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
+<div class="resource-launch hidden"><div><b>📚 Recursos educativos</b><span>PDF, videos, páginas educativas y materiales descargables por materia.</span></div><button class="secondary" onclick="openResources()">Abrir recursos →</button></div><section id="home"><div class="section-title"><div><div class="mini-label">DOCENTE</div><h2>Consulta de actividades</h2><p>Selecciona a tu docente para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
 <article class="subject subject-alfredo" onclick="openStudentDirectory()"><div class="subject-img"><img src="./assets/alfredo-materias.svg" alt="Materias"></div><div class="subject-body"><div class="subject-icon">👨‍🏫</div><h3>Alfredo</h3><span class="badge">CONSULTAR</span></div></article>
 </div><div class="quick-info"><div>🔒 <b>Acceso protegido</b><span>Consulta personal con PIN</span></div><div>📈 <b>Seguimiento</b><span>Avance actualizado</span></div><div>📱 <b>Desde cualquier dispositivo</b><span>Portal instalable</span></div></div><div class="center"><button class="secondary teacher-btn" onclick="teacher()">🔐 Acceso docente</button></div></section>
 <section id="resources" class="hidden"><div id="resourcesBox"></div></section><section id="studentDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
@@ -52,4 +55,7 @@ async function installPortal(){
 }
 </script><script>
 function showParentAccess(){alert('El acceso para Padres de Familia se habilitará próximamente.')}
+</script><script>
+function showAbout(){alert("Escuela Secundaria General Santa Ana Bathá · Chilcuautla, Hidalgo.");}
+function showContact(){alert("Contacto escolar: utiliza el acceso docente o la dirección de la escuela para comunicación institucional.");}
 </script></body></html>
