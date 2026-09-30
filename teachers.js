@@ -143,7 +143,7 @@ function openGenericTeacherGroup(teacherId,groupLabel){
   $('tg').value=selectedGeneralGroup;
   $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
   const oldManager=$('generalActivityManager');if(oldManager)oldManager.remove();
-  $('tg').insertAdjacentHTML('afterend','<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button></div>');
+  $('tg').insertAdjacentHTML('afterend','<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button><button class="primary" onclick="descargarTablaCalificacionesExcel(generalTeacherSubject,$('tg').value)">📥 Descargar Excel para imprimir</button></div></div>');
   const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(t.role)+'&_='+Date.now();
   jsonpBiology(url,function(d){if(!d||!d.ok){$('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar '+t.role+'.')+'</div>';return;}generalTeacherData=d;renderGeneralTeacherTable();},function(){$('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.</div>';});
 }
@@ -167,7 +167,7 @@ function renderGeneralTeacherTable(){
     });
     total=Math.round(total*100)/100;html+='<td class="total" id="general-total-'+escapeHtml(lista)+'">'+total+'%</td></tr>';
   });
-  html+='</tbody></table></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="secondary" onclick="descargarTablaCalificacionesExcel(\''+escapeHtml(generalTeacherSubject)+'\',\''+escapeHtml($('tg').value)+'\')">📥 Descargar Excel</button></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets.</p>';
+  html+='</tbody></table></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets.</p>';
   $('table').innerHTML=html;
 }
 function saveGeneralGrade(input){
