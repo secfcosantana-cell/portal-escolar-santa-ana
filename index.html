@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#003c32">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=41">
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=42">
 <title>Portal Escolar</title>
 </head>
 <body>
@@ -25,8 +25,8 @@
     <p>Un espacio digital para aprender, organizarnos y fortalecer<br class="desktop-only"> nuestra comunidad educativa.</p>
   </div>
   <div class="hero-access">
-    <button onclick="openStudentDirectory()"><span class="access-icon"><img src="./assets/icon-alumnos.svg" alt=""></span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
-    <button onclick="teacher()"><span class="access-icon"><img src="./assets/icon-docentes.svg" alt=""></span><b>Acceso<br>Docentes</b><strong>›</strong></button>
+    <button onclick="portalOpenStudents()"><span class="access-icon"><img src="./assets/icon-alumnos.svg" alt=""></span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
+    <button onclick="portalOpenTeachers()"><span class="access-icon"><img src="./assets/icon-docentes.svg" alt=""></span><b>Acceso<br>Docentes</b><strong>›</strong></button>
     <button onclick="showParentAccess()"><span class="access-icon"><img src="./assets/icon-familias.svg" alt=""></span><b>Acceso<br>Padres de Familia</b><strong>›</strong></button>
     <button onclick="openResources()"><span class="access-icon"><img src="./assets/icon-recursos.svg" alt=""></span><b>Recursos<br>Educativos</b><strong>›</strong></button>
   </div>
@@ -42,7 +42,7 @@
 <section id="resources" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="resourcesBox"></div></section><section id="studentDirectory" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="studentBox"></div></section><section id="physics" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="physicsBox"></div></section>
 <section id="teacher" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
-<script src="./app-local.js?v=31"></script><script src="./physics.js?v=34"></script><script src="./teachers.js?v=33"></script><script src="./resources.js?v=5"></script>
+<script src="./app-local.js?v=32"></script><script src="./physics.js?v=35"></script><script src="./teachers.js?v=34"></script><script src="./resources.js?v=6"></script>
 <script>
 let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
@@ -61,4 +61,12 @@ function landing(){home();document.querySelector('.hero-target')?.classList.remo
 window.addEventListener('load',()=>{document.getElementById('installBtn')?.classList.remove('hidden');});
 function showAbout(){alert("Escuela Secundaria General Santa Ana Bathá · Chilcuautla, Hidalgo.");}
 function showContact(){alert("Contacto escolar: utiliza el acceso docente o la dirección de la escuela para comunicación institucional.");}
+function portalOpenStudents(){
+  if(typeof window.openStudentDirectory==='function'){window.openStudentDirectory();return;}
+  alert('El módulo de alumnos todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.');
+}
+function portalOpenTeachers(){
+  if(typeof window.teacher==='function'){window.teacher();return;}
+  alert('El módulo docente todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.');
+}
 </script></body></html>
