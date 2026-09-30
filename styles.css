@@ -579,3 +579,15 @@ body{min-height:100svh;overflow-x:hidden}
   .portal-section{min-height:calc(100svh - 78px)!important;padding:10px 10px 28px!important}
   .portal-section .section-homebar{justify-content:flex-start!important}
 }
+
+
+/* ===== FONDO FOTOGRÁFICO DEL PLANTEL · fallback vectorial ===== */
+.hero-target{
+ background-image:
+ linear-gradient(rgba(255,255,255,.42),rgba(255,255,255,.58)),
+ url('https://elhuarache.com.mx/wp-content/uploads/2025/03/481469646_1103771265095676_4696433146252297193_n.webp'),
+ url('./assets/hero-school.svg')!important;
+ background-size:cover,cover,cover!important;
+ background-position:center,center,center!important;
+ background-repeat:no-repeat!important;
+}
