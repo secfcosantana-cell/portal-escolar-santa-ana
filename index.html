@@ -8,36 +8,32 @@
 </head>
 <body>
 <div id="login" class="screen"><div class="login-card">
-<img src="./assets/logo-real.png" alt="Logo oficial de la escuela"><div class="eyebrow">PORTAL ESCOLAR 2026–2027</div>
+<img src="./assets/logo-santa-ana.svg" alt="Logo oficial de la escuela"><div class="eyebrow">PORTAL ESCOLAR 2026–2027</div>
 <h1>Escuela Secundaria</h1><p>Santa Ana Batha · Chilcuautla</p><label>Contraseña general</label>
 <input id="pw" type="password"><button class="primary" onclick="enter()">Entrar</button><div id="msg" class="msg"></div>
 </div></div>
-<div id="app" class="hidden"><header><div class="brand"><img src="./assets/logo-real.png" alt="Logo oficial"><div><b>Portal Escolar</b><span>2026–2027</span></div></div>
+<div id="app" class="hidden"><header><div class="brand"><img src="./assets/logo-santa-ana.svg" alt="Logo oficial"><div><b>Portal Escolar</b><span>2026–2027</span></div></div>
 <div class="header-actions"><button id="installBtn" class="ghost" onclick="installPortal()">📲 Instalar</button><button class="ghost" onclick="location.reload()">Salir</button></div></header>
 <main><section class="hero">
   <div class="hero-copy">
-    <div class="eyebrow">ESCUELA SECUNDARIA GENERAL FRANCISCO GONZÁLEZ BOCANEGRA</div>
+    <div class="eyebrow">ESCUELA SECUNDARIA GENERAL SANTA ANA BATHÁ</div>
     <h2>Portal Escolar</h2>
     <p>Un espacio digital para aprender, consultar actividades y dar seguimiento a tus avances.</p>
     <div class="hero-pills"><span>📚 Aprendizaje</span><span>🔬 Ciencia</span><span>💻 Tecnología</span><span>🤝 Comunidad</span></div>
   </div>
-  <div class="hero-art">
-    <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
-    <img src="./assets/microscope.svg" alt="Microscopio">
-    <strong>Aprender · Crear · Avanzar</strong>
-  </div>
+  <div class="hero-school-badge"><img src="./assets/logo-santa-ana.svg" alt="Escudo oficial de la escuela"><div><b>Aprender · Crear · Avanzar</b><span>Comunidad educativa Santa Ana Bathá</span></div></div>
 </section>
 <section class="welcome-strip">
   <div><span class="mini-label">BIENVENIDA</span><h3>Tu escuela también está en línea</h3><p>Consulta tus actividades y evaluaciones desde computadora, tableta o teléfono.</p></div>
-  <div class="school-mark"><b>FGB</b><span>2026–2027</span></div>
+  <div class="school-mark"><b>SAB</b><span>2026–2027</span></div>
 </section>
-<section id="home"><div class="section-title"><div><div class="mini-label">DOCENTE</div><h2>Consulta de actividades</h2><p>Selecciona a tu docente para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
+<div class="resource-launch"><div><b>📚 Recursos educativos</b><span>PDF, videos, páginas educativas y materiales descargables por materia.</span></div><button class="secondary" onclick="openResources()">Abrir recursos →</button></div><section id="home"><div class="section-title"><div><div class="mini-label">DOCENTE</div><h2>Consulta de actividades</h2><p>Selecciona a tu docente para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
 <article class="subject subject-alfredo" onclick="openStudentDirectory()"><div class="subject-img"><img src="./assets/alfredo-materias.svg" alt="Materias"></div><div class="subject-body"><div class="subject-icon">👨‍🏫</div><h3>Alfredo</h3><span class="badge">CONSULTAR</span></div></article>
 </div><div class="quick-info"><div>🔒 <b>Acceso protegido</b><span>Consulta personal con PIN</span></div><div>📈 <b>Seguimiento</b><span>Avance actualizado</span></div><div>📱 <b>Desde cualquier dispositivo</b><span>Portal instalable</span></div></div><div class="center"><button class="secondary teacher-btn" onclick="teacher()">🔐 Acceso docente</button></div></section>
-<section id="studentDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
+<section id="resources" class="hidden"><div id="resourcesBox"></div></section><section id="studentDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
 <section id="teacher" class="hidden"><button class="back" onclick="home()">← Materias</button><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
-<script src="./app-local.js?v=25"></script><script src="./physics.js?v=31"></script><script src="./teachers.js?v=28"></script>
+<script src="./app-local.js?v=25"></script><script src="./physics.js?v=31"></script><script src="./teachers.js?v=28"></script><script src="./resources.js?v=1"></script>
 <script>
 let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
