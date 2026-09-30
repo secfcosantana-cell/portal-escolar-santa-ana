@@ -74,7 +74,7 @@ function openFranciscoGroup(group){
     $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
     const oldManager=$('biologyActivityManager');
     if(oldManager) oldManager.remove();
-    $('tg').insertAdjacentHTML('afterend','<div id="biologyActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openBiologyActivityManager()">⚙️ Administrar actividades</button></div>');
+    $('tg').insertAdjacentHTML('afterend','<div id="biologyActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="openBiologyActivityManager()">⚙️ Administrar actividades</button><button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;Biología&quot;,document.getElementById(&quot;tg&quot;).value)">📥 Descargar Excel para imprimir</button></div></div>');
     const pin=teacherPinSession||TEACHER_PIN;
     const url=BIOLOGY_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(pin)+'&materia='+encodeURIComponent('Biología')+'&_='+Date.now();
     jsonpBiology(url,function(d){
