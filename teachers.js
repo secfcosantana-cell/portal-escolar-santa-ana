@@ -66,7 +66,7 @@ function teacherBackToGroups(){
 }
 
 function teacherPanelActionBar(materia,grupo){
-  return '<div class="teacher-panel-actions">'+
+  return '<div class="teacher-panel-actions" id="teacherPanelActions">'+
     '<button class="back" onclick="teacherBackToGroups()">← Regresar a mis grupos</button>'+
     '<button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;'+escapeHtml(materia||'')+'&quot;,&quot;'+escapeHtml(grupo||'')+'&quot;)">📥 Descargar Excel para imprimir</button>'+
   '</div>';
@@ -80,6 +80,7 @@ function openFranciscoGroup(group){
   generalTeacherAssignment=null;
   const gm=$('generalActivityManager'); if(gm) gm.remove();
   const bm=$('biologyActivityManager'); if(bm) bm.remove();
+  document.querySelectorAll('.teacher-panel-actions').forEach(function(x){x.remove();});
   if(group.startsWith('Biología')){
     $('teacherDirectory').classList.add('hidden');
     $('teacher').classList.remove('hidden');
@@ -174,6 +175,7 @@ function openGenericTeacherGroup(teacherId,groupLabel){
   // Evitar que quede visible el administrador de Biología al cambiar a otro docente/materia.
   const oldManager=$('generalActivityManager');if(oldManager)oldManager.remove();
   const oldBiologyManager=$('biologyActivityManager');if(oldBiologyManager)oldBiologyManager.remove();
+  document.querySelectorAll('.teacher-panel-actions').forEach(function(x){x.remove();});
   $('tg').insertAdjacentHTML('afterend',teacherPanelActionBar(generalTeacherSubject,selectedGeneralGroup)+'<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button></div>');
   const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(t.role)+'&_='+Date.now();
   jsonpBiology(url,function(d){if(!d||!d.ok){$('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar '+t.role+'.')+'</div>';return;}generalTeacherData=d;renderGeneralTeacherTable();},function(){$('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.</div>';});
