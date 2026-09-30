@@ -613,3 +613,15 @@ body{min-height:100svh;overflow-x:hidden}
   background-repeat:no-repeat!important;
 }
 .hero-target .hero-copy{background:rgba(255,255,255,.92)!important}
+
+/* v47 · Restauración del collage fotográfico */
+.hero-target{
+  background-color:#dce6ee!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.10)),
+    url('./assets/portal-collage-photos.svg')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+}
+.hero-target .hero-copy{background:rgba(255,255,255,.92)!important}
