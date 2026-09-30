@@ -92,7 +92,7 @@ function openStudentTeacher(id){
 }
 
 /* ====================== ARTES · MATEMÁTICAS · CIENCIAS ====================== */
-const GENERAL_SCHOOL_SCRIPT_URL=BIOLOGY_SCRIPT_URL;
+const GENERAL_SCHOOL_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxYs9ZEvfvly_HwWNubtrXCPquZ9Eyln4ZQkhU3qwgbuzjNgwyomFFvhrzV0DgiHE52Fw/exec';
 const GENERAL_SUBJECT_GROUPS={
   'Artes':['1º A','2º A','2º B','2º C','2º D','2º E','3º A','3º B','3º C','3º D','3º E'],
   'Matemáticas':['2º D','3º A','3º B','3º C','3º D','3º E'],
