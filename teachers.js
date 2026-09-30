@@ -82,13 +82,18 @@ function openFranciscoGroup(group){
       window.teacherData=d;
       teacherTable();
     },function(){
-      $('table').innerHTML='<div class="box msg"><b>No respondió Google Sheets de Biología.</b><br><span class="muted">El portal sí llegó al módulo, pero el servicio de Google Apps Script no devolvió datos.</span><br><button class="secondary" style="margin-top:10px" onclick="openFranciscoGroup(\'Biología · 1.º '+(document.getElementById(\'tg\')?.value||\'A\')+'\')">🔄 Reintentar conexión</button></div>';
+      $('table').innerHTML='<div class="box msg"><b>No respondió Google Sheets de Biología.</b><br><span class="muted">El portal sí llegó al módulo, pero el servicio de Google Apps Script no devolvió datos.</span><br><button class="secondary" style="margin-top:10px" onclick="retryBiologyConnection()">🔄 Reintentar conexión</button></div>';
     });
   }else if(group.startsWith('Física')){
     $('teacherDirectory').classList.add('hidden');
     $('physics').classList.remove('hidden');
     physicsTeacherLogin();
   }
+}
+
+function retryBiologyConnection(){
+  const g=$('tg')?.value||'A';
+  openFranciscoGroup('Biología · 1.º '+g);
 }
 
 function teacherPending(group){
