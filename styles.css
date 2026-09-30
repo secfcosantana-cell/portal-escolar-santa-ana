@@ -728,3 +728,12 @@ body{min-height:100svh;overflow-x:hidden}
   position:relative!important;
   z-index:5!important;
 }
+
+/* v51b · Tres accesos principales */
+.hero-target .hero-access{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  width:min(1100px,calc(100% - 40px))!important;
+}
+@media(max-width:700px){
+  .hero-target .hero-access{grid-template-columns:1fr!important;width:94vw!important}
+}
