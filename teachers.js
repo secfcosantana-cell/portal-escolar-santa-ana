@@ -257,8 +257,27 @@ function activityAdminBiology(op,extra){
   const u=BIOLOGY_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
   jsonpBiology(u,function(d){
     if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar el cambio.');return;}
+
+    // Actualizar el administrador.
     loadBiologyActivityManager();
-    teacherTable();
+
+    // Recargar TODO desde Google Apps Script para que las actividades nuevas
+    // (A9, A10, A11, etc.) aparezcan inmediatamente en la tabla de captura.
+    const refreshUrl=BIOLOGY_SCRIPT_URL+
+      '?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+
+      '&materia='+encodeURIComponent('Biología')+
+      '&_='+Date.now();
+
+    jsonpBiology(refreshUrl,function(fresh){
+      if(fresh&&fresh.ok){
+        window.teacherData=fresh;
+      }
+      teacherTable();
+    },function(){
+      // Si la recarga falla, conservamos los datos actuales y mostramos la tabla.
+      teacherTable();
+    });
+
   },function(){alert('No se pudo conectar con Google Sheets.');});
 }
 
