@@ -192,7 +192,7 @@ function addGeneralActivity(){const n=$('generalNewActivity')?.value.trim(),p=$(
 function editGeneralActivity(id,nombre,pct){const n=prompt('Nombre de la actividad:',nombre);if(n===null)return;const p=prompt('Porcentaje:',pct);if(p===null)return;activityAdminGeneral('edit',{idActividad:id,actividad:n,porcentaje:p});}
 function toggleGeneralActivity(id,activa){activityAdminGeneral('toggle',{idActividad:id,activa:String(activa)});}
 function activityAdminGeneral(op,extra){
-  const params=Object.assign({action:'activityAdmin',op:op,pin:teacherPinSession||TEACHER_PIN,materia:generalTeacherSubject,_:Date.now()},extra||{});
+  const params=Object.assign({action:'activityAdmin',op:op,pin:teacherPinSession||TEACHER_PIN,materia:generalTeacherSubject,grupo:$('tg')?.value||'',_:Date.now()},extra||{});
   const u=GENERAL_SCHOOL_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
   jsonpBiology(u,function(d){if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar el cambio.');return;}loadGeneralActivityManager();const refresh=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(generalTeacherSubject)+'&_='+Date.now();jsonpBiology(refresh,function(fresh){if(fresh&&fresh.ok)generalTeacherData=fresh;renderGeneralTeacherTable();},function(){renderGeneralTeacherTable();});},function(){alert('No se pudo conectar con Google Sheets.');});
 }
