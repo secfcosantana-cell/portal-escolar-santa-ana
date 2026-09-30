@@ -2,6 +2,8 @@ const PHYSICS_STUDENT_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxYs9Z
 let physicsTeacherPinSession='';
 
 function openPhysics(){
+  document.querySelector('.hero-target')?.classList.add('hidden');
+  document.querySelector('.hero-footer')?.classList.add('hidden');
   document.getElementById('home').classList.add('hidden');
   document.getElementById('student').classList.add('hidden');
   document.getElementById('teacher').classList.add('hidden');
