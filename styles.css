@@ -581,13 +581,15 @@ body{min-height:100svh;overflow-x:hidden}
 }
 
 
-/* ===== FONDO FOTOGRÁFICO DEL PLANTEL · fallback vectorial ===== */
+
+/* ===== v42 · FONDO FOTOGRÁFICO REAL + PRIORIDAD SOBRE FALLBACK ===== */
 .hero-target{
- background-image:
- linear-gradient(rgba(255,255,255,.42),rgba(255,255,255,.58)),
- url('https://elhuarache.com.mx/wp-content/uploads/2025/03/481469646_1103771265095676_4696433146252297193_n.webp'),
- url('./assets/hero-school.svg')!important;
- background-size:cover,cover,cover!important;
- background-position:center,center,center!important;
- background-repeat:no-repeat!important;
+  background-color:#dce6ee!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.22)),
+    url('https://images.weserv.nl/?url=elhuarache.com.mx%2Fwp-content%2Fuploads%2F2025%2F03%2F481469646_1103771265095676_4696433146252297193_n.webp&w=2200&q=88')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
 }
+.hero-target .hero-copy{background:rgba(255,255,255,.90)!important}
