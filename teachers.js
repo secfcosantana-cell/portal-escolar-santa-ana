@@ -44,6 +44,9 @@ function openFranciscoGroup(group){
     $('tg').innerHTML=['A','B','C'].map(x=>'<option value="'+x+'">'+x+'</option>').join('');
     $('tg').value=code;
     $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
+    const oldManager=$('biologyActivityManager');
+    if(oldManager) oldManager.remove();
+    $('tg').insertAdjacentHTML('afterend','<div id="biologyActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openBiologyActivityManager()">⚙️ Administrar actividades</button></div>');
     const pin=teacherPinSession||TEACHER_PIN;
     const url=BIOLOGY_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(pin)+'&materia='+encodeURIComponent('Biología')+'&_='+Date.now();
     jsonpBiology(url,function(d){
@@ -170,6 +173,89 @@ function biologyActivityWeight(a){
   const n=Number(String(value).replace(',','.'));
   return isNaN(n)?0:n;
 }
+
+let biologyActivityPeriod='1';
+
+function openBiologyActivityManager(){
+  const box=$('biologyActivityManager');
+  if(!box)return;
+  box.outerHTML='<div id="biologyActivityManager" class="box" style="margin:12px 0">'+
+    '<div class="eyebrow">ADMINISTRAR ACTIVIDADES · BIOLOGÍA</div>'+
+    '<h3 style="margin:4px 0 10px">Actividades y porcentajes</h3>'+
+    '<div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">'+
+      '<div><label>Periodo</label><select id="bioAdminPeriod" onchange="biologyActivityPeriod=this.value;loadBiologyActivityManager()"><option value="1">Periodo 1</option><option value="2">Periodo 2</option><option value="3">Periodo 3</option></select></div>'+
+      '<button class="secondary" onclick="closeBiologyActivityManager()">Cerrar administración</button>'+
+    '</div>'+
+    '<div id="bioAdminBody" style="margin-top:12px">Cargando...</div>'+
+  '</div>';
+  $('bioAdminPeriod').value=biologyActivityPeriod;
+  loadBiologyActivityManager();
+}
+
+function closeBiologyActivityManager(){
+  const m=$('biologyActivityManager');
+  if(m)m.outerHTML='<div id="biologyActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openBiologyActivityManager()">⚙️ Administrar actividades</button></div>';
+}
+
+function loadBiologyActivityManager(){
+  const body=$('bioAdminBody');
+  if(!body)return;
+  body.innerHTML='<div class="muted">Cargando actividades...</div>';
+  const u=BIOLOGY_SCRIPT_URL+'?action=activityAdmin&op=list&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent('Biología')+'&_='+Date.now();
+  jsonpBiology(u,function(d){
+    if(!d||!d.ok){body.innerHTML='<div class="msg">'+escapeHtml((d&&d.error)||'No se pudo cargar el catálogo.')+'</div>';return;}
+    renderBiologyActivityManager(d.actividades||[]);
+  },function(){body.innerHTML='<div class="msg">No se pudo conectar con Google Sheets.</div>';});
+}
+
+function renderBiologyActivityManager(all){
+  const body=$('bioAdminBody');
+  if(!body)return;
+  const period=biologyActivityPeriod;
+  const acts=all.filter(a=>String(a.periodo).trim()===String(period));
+  const total=acts.filter(a=>a.activa).reduce((s,a)=>s+Number(a.porcentaje||0),0);
+  const disponible=Math.max(0,100-total);
+  let html='<div class="teacher-note"><b>Periodo '+period+'</b> · Total activo: '+Math.round(total*100)/100+'% · Disponible: '+Math.round(disponible*100)/100+'%</div>';
+  html+='<div style="overflow:auto;margin-top:10px"><table class="table"><thead><tr><th>ID</th><th>Actividad</th><th>%</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+  acts.forEach(a=>{
+    html+='<tr><td>'+escapeHtml(a.idActividad)+'</td><td><b>'+escapeHtml(a.actividad)+'</b></td><td>'+Number(a.porcentaje)+'%</td><td>'+(a.activa?'🟢 Activa':'⚪ Inactiva')+'</td><td style="white-space:nowrap"><button class="secondary" onclick="editBiologyActivity(\''+escapeHtml(a.idActividad)+'\',\''+escapeHtml(a.actividad).replace(/'/g,"&#39;")+'\','+Number(a.porcentaje)+','+Number(a.periodo||1)+')">✏️ Editar</button> <button class="secondary" onclick="toggleBiologyActivity(\''+escapeHtml(a.idActividad)+'\','+(!a.activa)+')">'+(a.activa?'Desactivar':'Activar')+'</button></td></tr>';
+  });
+  html+='</tbody></table></div>';
+  html+='<div class="box" style="margin-top:12px"><h4 style="margin:0 0 8px">➕ Agregar actividad al Periodo '+period+'</h4><div style="display:grid;grid-template-columns:minmax(220px,1fr) 120px auto;gap:8px;align-items:end"><div><label>Actividad</label><input id="bioNewActivity" placeholder="Nombre de la actividad"></div><div><label>Porcentaje</label><input id="bioNewPct" type="number" min="0.1" max="100" step="0.1" placeholder="%"></div><button class="primary" onclick="addBiologyActivity()">Agregar</button></div><div class="muted" style="margin-top:8px">No se puede superar el 100% del periodo.</div></div>';
+  body.innerHTML=html;
+}
+
+function addBiologyActivity(){
+  const nombre=$('bioNewActivity').value.trim();
+  const pct=$('bioNewPct').value.trim();
+  if(!nombre||!pct){alert('Escribe el nombre y el porcentaje.');return;}
+  activityAdminBiology('add',{actividad:nombre,porcentaje:pct,periodo:biologyActivityPeriod});
+}
+
+function editBiologyActivity(id,nombre,pct,periodo){
+  const nuevoNombre=prompt('Nombre de la actividad:',nombre);
+  if(nuevoNombre===null)return;
+  const nuevoPct=prompt('Porcentaje:',pct);
+  if(nuevoPct===null)return;
+  const nuevoPeriodo=prompt('Periodo (1, 2 o 3):',periodo);
+  if(nuevoPeriodo===null)return;
+  activityAdminBiology('edit',{idActividad:id,actividad:nuevoNombre,porcentaje:nuevoPct,periodo:nuevoPeriodo});
+}
+
+function toggleBiologyActivity(id,activa){
+  activityAdminBiology('toggle',{idActividad:id,activa:String(activa)});
+}
+
+function activityAdminBiology(op,extra){
+  const params=Object.assign({action:'activityAdmin',op:op,pin:teacherPinSession||TEACHER_PIN,materia:'Biología',_:Date.now()},extra||{});
+  const u=BIOLOGY_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+  jsonpBiology(u,function(d){
+    if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar el cambio.');return;}
+    loadBiologyActivityManager();
+    teacherTable();
+  },function(){alert('No se pudo conectar con Google Sheets.');});
+}
+
 function normalizarBioGrupo_(v){return String(v??'').trim().toUpperCase().replace(/\s+/g,' ').replace(/°/g,'º').replace(/\./g,'');}
 function normalizarBioNumero_(v){const t=String(v??'').trim().replace(/[^\d]/g,'');return t?String(Number(t)):'';}
 
