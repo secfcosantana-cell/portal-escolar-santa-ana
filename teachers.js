@@ -256,6 +256,7 @@ function activityIcon(id){
 }
 
 function teacherTable(){
+  if(typeof generalTeacherSubject!=='undefined' && generalTeacherSubject){renderGeneralTeacherTable();return;}
   if(!window.teacherData)return;
   const g=$('tg').value;
   const fullGroup='1º '+g;
