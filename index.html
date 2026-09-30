@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#003c32">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=33">
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=34">
 <title>Portal Escolar</title>
 </head>
 <body>
@@ -18,11 +18,17 @@
   <div class="hero-copy">
     <div class="eyebrow">ESCUELA SECUNDARIA GENERAL SANTA ANA BATHÁ</div>
     <h2>Portal Escolar</h2>
-    <p>Un espacio digital para aprender, consultar actividades y dar seguimiento a tus avances.</p>
-    <div class="hero-pills"><span>📚 Aprendizaje</span><span>🔬 Ciencia</span><span>💻 Tecnología</span><span>🤝 Comunidad</span></div>
+    <p>Un espacio digital para aprender, organizarnos y fortalecer nuestra comunidad educativa.</p>
   </div>
-  <div class="hero-school-badge"><img src="./assets/logo-santa-ana.svg" alt="Escudo oficial de la escuela"><div><b>Aprender · Crear · Avanzar</b><span>Comunidad educativa Santa Ana Bathá</span></div></div>
+  <div class="hero-school-badge"><img src="./assets/logo-santa-ana.svg" alt="Escudo oficial de la escuela"></div>
+  <div class="hero-access">
+    <button onclick="openStudentDirectory()"><span>👥</span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
+    <button onclick="teacher()"><span>🧑‍🏫</span><b>Acceso<br>Docentes</b><strong>›</strong></button>
+    <button onclick="showParentAccess()"><span>👨‍👩‍👧</span><b>Acceso<br>Padres de Familia</b><strong>›</strong></button>
+    <button onclick="openResources()"><span>📄</span><b>Recursos<br>Educativos</b><strong>›</strong></button>
+  </div>
 </section>
+<div class="hero-footer"><span>📍 Santa Ana Bathá, Chilcuautla, Hidalgo</span><span>📖 <b>Educación para un mejor futuro</b></span></div>
 <section class="welcome-strip">
   <div><span class="mini-label">BIENVENIDA</span><h3>Tu escuela también está en línea</h3><p>Consulta tus actividades y evaluaciones desde computadora, tableta o teléfono.</p></div>
   <div class="school-mark"><b>SAB</b><span>2026–2027</span></div>
@@ -44,4 +50,6 @@ async function installPortal(){
  if(/iPhone|iPad|iPod/i.test(ua)) alert("En iPhone/iPad: toca Compartir (□↑) y selecciona “Añadir a pantalla de inicio”.");
  else alert("En Android con Chrome: abre ⋮ y selecciona “Instalar aplicación” o “Añadir a pantalla de inicio”. Si no aparece, recarga el portal.");
 }
+</script><script>
+function showParentAccess(){alert('El acceso para Padres de Familia se habilitará próximamente.')}
 </script></body></html>
