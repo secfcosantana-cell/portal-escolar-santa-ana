@@ -625,3 +625,15 @@ body{min-height:100svh;overflow-x:hidden}
   background-repeat:no-repeat!important;
 }
 .hero-target .hero-copy{background:rgba(255,255,255,.92)!important}
+
+/* v47 · FONDO ESTABLE: usar collage fotográfico SVG ya publicado */
+.hero-target{
+  background-color:#dce6ee!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.12)),
+    url('./assets/portal-collage-photos.svg')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+}
+.hero-target .hero-copy{background:rgba(255,255,255,.90)!important}
