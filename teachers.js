@@ -245,9 +245,7 @@ function editBiologyActivity(id,nombre,pct,periodo){
   if(nuevoNombre===null)return;
   const nuevoPct=prompt('Porcentaje:',pct);
   if(nuevoPct===null)return;
-  const nuevoPeriodo=prompt('Periodo (1, 2 o 3):',periodo);
-  if(nuevoPeriodo===null)return;
-  activityAdminBiology('edit',{idActividad:id,actividad:nuevoNombre,porcentaje:nuevoPct,periodo:nuevoPeriodo});
+  activityAdminBiology('edit',{idActividad:id,actividad:nuevoNombre,porcentaje:nuevoPct});
 }
 
 function toggleBiologyActivity(id,activa){
