@@ -601,3 +601,15 @@ body{min-height:100svh;overflow-x:hidden}
 /* v44 · COLLAGE FOTOGRÁFICO DEL PLANTEL */
 .hero-target{background-color:#dce6ee!important;background-image:linear-gradient(rgba(255,255,255,.20),rgba(255,255,255,.24)),url('./assets/portal-collage-photos.svg')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
 .hero-target .hero-copy{background:rgba(255,255,255,.90)!important}
+
+/* v45 · COLLAGE FOTOGRÁFICO HD */
+.hero-target{
+  background-color:#dce6ee!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.06),rgba(255,255,255,.08)),
+    url('./assets/portal-collage-hd.webp')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+}
+.hero-target .hero-copy{background:rgba(255,255,255,.92)!important}
