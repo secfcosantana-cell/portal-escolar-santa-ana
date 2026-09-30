@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#003c32">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=42">
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=43">
 <title>Portal Escolar</title>
 </head>
 <body>
@@ -42,7 +42,21 @@
 <section id="resources" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="resourcesBox"></div></section><section id="studentDirectory" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="studentBox"></div></section><section id="physics" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="physicsBox"></div></section>
 <section id="teacher" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
-<script src="./app-local.js?v=32"></script><script src="./physics.js?v=35"></script><script src="./teachers.js?v=34"></script><script src="./resources.js?v=6"></script>
+<script>
+/* v43: limpieza de Service Worker/caché para corregir versiones antiguas */
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+  const key='portal-cache-reset-v43';
+  if(sessionStorage.getItem(key)==='done') return;
+  sessionStorage.setItem(key,'done');
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    return Promise.all(regs.map(function(reg){return reg.unregister();}));
+  }).then(function(){
+    if(window.caches) return caches.keys().then(function(keys){return Promise.all(keys.map(function(k){return caches.delete(k);}));});
+  }).then(function(){location.reload();}).catch(function(){location.reload();});
+})();
+</script>
+<script src="./app-local.js?v=43"></script><script src="./physics.js?v=43"></script><script src="./teachers.js?v=43"></script><script src="./resources.js?v=43"></script>
 <script>
 let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
