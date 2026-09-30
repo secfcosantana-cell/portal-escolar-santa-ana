@@ -166,7 +166,7 @@ function renderGeneralTeacherTable(){
   generalTeacherAssignment=asignacion;
   const students=asignacion.alumnos||[],evals=asignacion.evaluaciones||[];
   const acts=(asignacion.actividades||[]).filter(a=>!['no','false','0'].includes(String(a.Activa??'').trim().toLowerCase()));
-  let html='<div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+generalActivityWeight_(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
+  let html='<div class="teacher-note"><b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.</div><div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+generalActivityWeight_(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
   students.forEach(st=>{
     const lista=String(st.lista??st['No. lista']??'').trim();let total=0;
     html+='<tr><td>'+escapeHtml(lista)+'. <b>'+escapeHtml(st.nombre||st.Alumno||'')+'</b></td>';
@@ -302,7 +302,7 @@ function teacherTable(){
   if(!asignacion){$('table').innerHTML='<div class="box msg">No se encontró la asignación de Biología '+escapeHtml(fullGroup)+'.</div>';return;}
   const students=asignacion.alumnos||[],evals=asignacion.evaluaciones||[];
   const acts=(asignacion.actividades||[]).filter(a=>!['no','false','0'].includes(String(a.Activa??'').trim().toLowerCase()));
-  let html='<div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+biologyActivityWeight(a)+'%</span></th>').join('')+'<th>Total</th></tr></thead><tbody>';
+  let html='<div class="teacher-note"><b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.</div><div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+biologyActivityWeight(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
   students.forEach(st=>{
     const lista=String(st.lista||'').trim();let total=0;
     html+='<tr><td>'+escapeHtml(lista)+'. <b>'+escapeHtml(st.nombre||'')+'</b></td>';
@@ -315,7 +315,7 @@ function teacherTable(){
     total=Math.round(total*100)/100;
     html+='<td class="total" id="biology-total-'+escapeHtml(lista)+'">'+total+'%</td></tr>';
   });
-  html+='</tbody></table></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="secondary" onclick="descargarTablaCalificacionesExcel(\'Biología\',\'1.º '+code+'\')">📥 Descargar Excel</button></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets.</p>';
+  html+='</tbody></table></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="secondary" onclick="descargarTablaCalificacionesExcel(\'Biología\',\'1.º '+code+'\')">📥 Descargar Excel</button></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets. El acumulado se calcula automáticamente con el valor porcentual de cada actividad.</p>';
   $('table').innerHTML=html;
 }
 
