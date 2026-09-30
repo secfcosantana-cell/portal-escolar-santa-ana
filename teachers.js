@@ -58,6 +58,12 @@ function openTeacherProfile(id){
   box.innerHTML=html;
 }
 function openFranciscoGroup(group){
+  // Limpiar el estado de los módulos generales antes de abrir Biología/Física.
+  generalTeacherSubject='';
+  generalTeacherData=null;
+  generalTeacherAssignment=null;
+  const gm=$('generalActivityManager'); if(gm) gm.remove();
+  const bm=$('biologyActivityManager'); if(bm) bm.remove();
   if(group.startsWith('Biología')){
     $('teacherDirectory').classList.add('hidden');
     $('teacher').classList.remove('hidden');
