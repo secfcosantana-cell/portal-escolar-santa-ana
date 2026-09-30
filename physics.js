@@ -319,6 +319,8 @@ function renderPhysicsTeacher(){
     '<div class="teacher-note">'+
       '<b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.'+
     '</div>'+
+    '<div style="margin:12px 0"><button class="secondary" onclick="openPhysicsActivityManager()">⚙️ Administrar actividades</button></div>'+
+    '<div id="physicsActivityManager"></div>'+
     '<div class="tableWrap">'+
     '<table class="table physics-grade-table">'+
     '<thead><tr>'+
@@ -380,6 +382,82 @@ function renderPhysicsTeacher(){
   document.getElementById('physicsBox').innerHTML=html;
 }
 
+
+
+let physicsActivityPeriod='1';
+
+function openPhysicsActivityManager(){
+  const box=document.getElementById('physicsActivityManager');
+  if(!box)return;
+  box.innerHTML='<div class="box" style="margin:12px 0">'+
+    '<div class="eyebrow">ADMINISTRAR ACTIVIDADES · FÍSICA</div>'+
+    '<h3 style="margin:4px 0 10px">Actividades y porcentajes</h3>'+
+    '<div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap"><div><label>Periodo</label><select id="physicsAdminPeriod" onchange="physicsActivityPeriod=this.value;loadPhysicsActivityManager()"><option value="1">Periodo 1</option><option value="2">Periodo 2</option><option value="3">Periodo 3</option></select></div><button class="secondary" onclick="closePhysicsActivityManager()">Cerrar administración</button></div>'+
+    '<div id="physicsAdminBody" style="margin-top:12px">Cargando...</div></div>';
+  document.getElementById('physicsAdminPeriod').value=physicsActivityPeriod;
+  loadPhysicsActivityManager();
+}
+
+function closePhysicsActivityManager(){
+  const box=document.getElementById('physicsActivityManager');
+  if(box)box.innerHTML='';
+}
+
+function loadPhysicsActivityManager(){
+  const body=document.getElementById('physicsAdminBody');
+  if(!body)return;
+  body.innerHTML='<div class="muted">Cargando actividades...</div>';
+  const u=PHYSICS_STUDENT_SCRIPT_URL+'?action=activityAdmin&op=list&pin='+encodeURIComponent(physicsTeacherPinSession||'2468')+'&materia='+encodeURIComponent('Física')+'&_='+Date.now();
+  jsonpPhysics(u,function(d){
+    if(!d||!d.ok){body.innerHTML='<div class="msg">'+escapeHtml((d&&d.error)||'No se pudo cargar el catálogo.')+'</div>';return;}
+    renderPhysicsActivityManager(d.actividades||[]);
+  },function(){body.innerHTML='<div class="msg">No se pudo conectar con Google Sheets.</div>';});
+}
+
+function renderPhysicsActivityManager(all){
+  const body=document.getElementById('physicsAdminBody');
+  if(!body)return;
+  const period=physicsActivityPeriod;
+  const acts=all.filter(a=>String(a.periodo).trim()===String(period));
+  const total=acts.filter(a=>a.activa).reduce((s,a)=>s+Number(a.porcentaje||0),0);
+  const disponible=Math.max(0,100-total);
+  let html='<div class="teacher-note"><b>Periodo '+period+'</b> · Total activo: '+Math.round(total*100)/100+'% · Disponible: '+Math.round(disponible*100)/100+'%</div>';
+  html+='<div style="overflow:auto;margin-top:10px"><table class="table"><thead><tr><th>ID</th><th>Actividad</th><th>%</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+  acts.forEach(a=>{
+    html+='<tr><td>'+escapeHtml(a.idActividad)+'</td><td><b>'+escapeHtml(a.actividad)+'</b></td><td>'+Number(a.porcentaje)+'%</td><td>'+(a.activa?'🟢 Activa':'⚪ Inactiva')+'</td><td style="white-space:nowrap"><button class="secondary" onclick="editPhysicsActivity(\''+escapeHtml(a.idActividad)+'\',\''+escapeHtml(a.actividad).replace(/'/g,"&#39;")+'\','+Number(a.porcentaje)+','+Number(a.periodo||1)+')">✏️ Editar</button> <button class="secondary" onclick="togglePhysicsActivity(\''+escapeHtml(a.idActividad)+'\','+(!a.activa)+')">'+(a.activa?'Desactivar':'Activar')+'</button></td></tr>';
+  });
+  html+='</tbody></table></div>';
+  html+='<div class="box" style="margin-top:12px"><h4 style="margin:0 0 8px">➕ Agregar actividad al Periodo '+period+'</h4><div style="display:grid;grid-template-columns:minmax(220px,1fr) 120px auto;gap:8px;align-items:end"><div><label>Actividad</label><input id="physicsNewActivity" placeholder="Nombre de la actividad"></div><div><label>Porcentaje</label><input id="physicsNewPct" type="number" min="0.1" max="100" step="0.1" placeholder="%"></div><button class="primary" onclick="addPhysicsActivity()">Agregar</button></div><div class="muted" style="margin-top:8px">No se puede superar el 100% del periodo.</div></div>';
+  body.innerHTML=html;
+}
+
+function addPhysicsActivity(){
+  const nombre=document.getElementById('physicsNewActivity').value.trim();
+  const pct=document.getElementById('physicsNewPct').value.trim();
+  if(!nombre||!pct){alert('Escribe el nombre y el porcentaje.');return;}
+  activityAdminPhysics('add',{actividad:nombre,porcentaje:pct,periodo:physicsActivityPeriod});
+}
+function editPhysicsActivity(id,nombre,pct,periodo){
+  const nuevoNombre=prompt('Nombre de la actividad:',nombre);
+  if(nuevoNombre===null)return;
+  const nuevoPct=prompt('Porcentaje:',pct);
+  if(nuevoPct===null)return;
+  const nuevoPeriodo=prompt('Periodo (1, 2 o 3):',periodo);
+  if(nuevoPeriodo===null)return;
+  activityAdminPhysics('edit',{idActividad:id,actividad:nuevoNombre,porcentaje:nuevoPct,periodo:nuevoPeriodo});
+}
+function togglePhysicsActivity(id,activa){
+  activityAdminPhysics('toggle',{idActividad:id,activa:String(activa)});
+}
+function activityAdminPhysics(op,extra){
+  const params=Object.assign({action:'activityAdmin',op:op,pin:physicsTeacherPinSession||'2468',materia:'Física',_:Date.now()},extra||{});
+  const u=PHYSICS_STUDENT_SCRIPT_URL+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+  jsonpPhysics(u,function(d){
+    if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar el cambio.');return;}
+    loadPhysicsActivityManager();
+    renderPhysicsTeacher();
+  },function(){alert('No se pudo conectar con Google Sheets.');});
+}
 
 /************************************************************
  * GUARDAR CALIFICACIÓN NUMÉRICA
