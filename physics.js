@@ -333,7 +333,10 @@ function renderPhysicsTeacher(){
 
   let html=
     '<div class="box">'+
-    '<button class="back" onclick="openPhysics()">← Física</button>'+
+    '<div class="teacher-panel-actions">'+
+    '<button class="back" onclick="teacherBackToGroups()">← Regresar a mis grupos</button>'+
+    '<button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;Física&quot;,&quot;2.º A&quot;)">📥 Descargar Excel para imprimir</button>'+
+    '</div>'+
     '<div class="eyebrow">FÍSICA · 2.º A · DOCENTE</div>'+
     '<h2>Panel docente</h2>'+
     '<p class="muted">Captura la calificación de cada actividad de 0 a 10. El porcentaje se calcula automáticamente según el valor de cada actividad.</p>'+
@@ -397,7 +400,7 @@ function renderPhysicsTeacher(){
   });
 
   html+='</tbody></table></div>'+
-    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="secondary" onclick="descargarTablaCalificacionesExcel(\'Física\',\'2.º A\')">📥 Descargar Excel</button></div>'+
+
     '<p class="muted physics-help">Los cambios se guardan directamente en Google Sheets. Los alumnos solo pueden consultar sus resultados.</p>'+
     '</div>';
 
