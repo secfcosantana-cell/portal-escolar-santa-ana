@@ -763,3 +763,12 @@ body{min-height:100svh;overflow-x:hidden}
 .activity-toggle-active{color:#9b2424;background:#fde2e2;border:1px solid #e0a2a2}
 .activity-toggle-inactive{color:#176b3a;background:#e2f4e8;border:1px solid #9bcfaf}
 .activity-toggle-btn:hover{filter:brightness(.97);transform:translateY(-1px)}
+
+/* v67 · Barra común en paneles docentes */
+.teacher-panel-actions{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0 16px}
+.teacher-panel-actions .back{margin:0}
+.teacher-panel-actions .primary{margin:0}
+@media(max-width:600px){
+  .teacher-panel-actions{display:grid;grid-template-columns:1fr;gap:8px}
+  .teacher-panel-actions button{width:100%}
+}
