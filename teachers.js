@@ -153,7 +153,9 @@ function openGenericTeacherGroup(teacherId,groupLabel){
   $('tg').innerHTML='<option value="'+escapeHtml(selectedGeneralGroup)+'">'+escapeHtml(selectedGeneralGroup)+'</option>';
   $('tg').value=selectedGeneralGroup;
   $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
+  // Evitar que quede visible el administrador de Biología al cambiar a otro docente/materia.
   const oldManager=$('generalActivityManager');if(oldManager)oldManager.remove();
+  const oldBiologyManager=$('biologyActivityManager');if(oldBiologyManager)oldBiologyManager.remove();
   $('tg').insertAdjacentHTML('afterend','<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button><button class="primary" onclick="descargarTablaCalificacionesExcel(generalTeacherSubject,document.getElementById(&quot;tg&quot;).value)">📥 Descargar Excel para imprimir</button></div></div>');
   const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(t.role)+'&_='+Date.now();
   jsonpBiology(url,function(d){if(!d||!d.ok){$('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar '+t.role+'.')+'</div>';return;}generalTeacherData=d;renderGeneralTeacherTable();},function(){$('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.</div>';});
@@ -213,14 +215,27 @@ function renderGeneralActivityManager(all){
   const body=$('generalAdminBody');if(!body)return;
   const period=generalActivityPeriod,current=String(window.generalCurrentPeriod||'1'),currentAsig=String(generalTeacherAssignment?.idAsignacion||'').trim();
   if(!currentAsig){body.innerHTML='<div class="msg">No se pudo identificar la asignación exacta de este grupo. No se mostrarán actividades.</div>';return;}
-  const acts=(all||[]).filter(a=>String(a.periodo??a.Periodo??'1').replace(/^Periodo\s*/i,'')===String(period)&&String(a.idAsignacion||a.ID_Asignación||'').trim()===currentAsig);
+  const acts=(all||[]).filter(a=>{
+    const aPeriod=String(a.periodo??a.Periodo??'1').replace(/^Periodo\s*/i,'');
+    const aAsig=String(a.idAsignacion??a.ID_Asignación??'').trim();
+    if(aPeriod!==String(period)||aAsig!==currentAsig)return false;
+    // Si el backend devuelve estos campos, también deben coincidir con la materia/grupo actuales.
+    const aMateria=String(a.materia??a.Materia??'').trim();
+    const aDocente=String(a.docente??a.Docente??'').trim();
+    const aGrupo=normalizarGeneralGrupo_(a.grupo??a.Grupo??'');
+    const actualGrupo=normalizarGeneralGrupo_($('tg')?.value||'');
+    if(aMateria && normalizarGeneralGrupo_(aMateria)!==normalizarGeneralGrupo_(generalTeacherSubject))return false;
+    if(aDocente && normalizarGeneralGrupo_(aDocente)!==normalizarGeneralGrupo_((TEACHER_DIRECTORY.find(x=>x.role===generalTeacherSubject)||{}).name||''))return false;
+    if(aGrupo && aGrupo!==actualGrupo)return false;
+    return true;
+  });
   const total=acts.filter(a=>a.activa===true||['si','sí','true','1'].includes(String(a.activa??a.Activa??'').trim().toLowerCase())).reduce((s,a)=>s+Number(a.porcentaje??a.Porcentaje??a['Valor_%']??0),0);
   const disponible=Math.max(0,100-total);
   let html='<div class="teacher-note"><b>Periodo '+escapeHtml(period)+'</b> · Total activo: '+Math.round(total*100)/100+'% · Disponible: '+Math.round(disponible*100)/100+'%'+(String(period)===current?' · 🟢 ACTUAL':'')+'</div>';
   if(String(period)!==current)html+='<div style="margin-top:8px"><button class="secondary" onclick="setGeneralCurrentPeriod(&quot;'+period+'&quot;)">Usar Periodo '+period+' como actual</button></div>';
   html+='<div style="overflow:auto;margin-top:10px"><table class="table"><thead><tr><th>ID</th><th>Actividad</th><th>%</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
   if(!acts.length)html+='<tr><td colspan="5"><span class="muted">No hay actividades registradas en este periodo.</span></td></tr>';
-  acts.forEach(a=>{const id=a.idActividad??a.ID_Actividad??'',name=a.actividad??a.Actividad??'',pct=Number(a.porcentaje??a.Porcentaje??a['Valor_%']??0),active=a.activa===true||['si','sí','true','1'].includes(String(a.activa??a.Activa??'').trim().toLowerCase());html+='<tr><td>'+escapeHtml(id)+'</td><td><b>'+escapeHtml(name)+'</b></td><td>'+pct+'%</td><td>'+(active?'🟢 Activa':'⚪ Inactiva')+'</td><td style="white-space:nowrap"><button class="secondary" onclick="editGeneralActivity(&quot;'+escapeHtml(id)+'&quot;,&quot;'+escapeHtml(name)+'&quot;,'+pct+')">✏️ Editar</button> <button class="secondary" onclick="toggleGeneralActivity(&quot;'+escapeHtml(id)+'&quot;,'+(!active)+')">'+(active?'Desactivar':'Activar')+'</button></td></tr>';});
+  acts.forEach(a=>{const id=a.idActividad??a.ID_Actividad??'',name=a.actividad??a.Actividad??'',pct=Number(a.porcentaje??a.Porcentaje??a['Valor_%']??0),active=a.activa===true||['si','sí','true','1'].includes(String(a.activa??a.Activa??'').trim().toLowerCase());html+='<tr><td>'+escapeHtml(id)+'</td><td><b>'+escapeHtml(name)+'</b></td><td>'+pct+'%</td><td><span class="activity-status '+(active?'activity-status-active':'activity-status-inactive')+'">'+(active?'🟢 Activa':'🔴 Inactiva')+'</span></td><td style="white-space:nowrap"><button class="secondary" onclick="editGeneralActivity(&quot;'+escapeHtml(id)+'&quot;,&quot;'+escapeHtml(name)+'&quot;,'+pct+')">✏️ Editar</button> <button class="activity-toggle-btn '+(active?'activity-toggle-active':'activity-toggle-inactive')+'" onclick="toggleGeneralActivity(&quot;'+escapeHtml(id)+'&quot;,'+(!active)+')">'+(active?'Desactivar':'Activar')+'</button></td></tr>';});
   html+='</tbody></table></div><div class="box" style="margin-top:12px"><h4 style="margin:0 0 8px">➕ Agregar actividad al Periodo '+escapeHtml(period)+'</h4><div style="display:grid;grid-template-columns:minmax(220px,1fr) 120px auto;gap:8px;align-items:end"><div><label>Actividad</label><input id="generalNewActivity" placeholder="Nombre de la actividad"></div><div><label>Porcentaje</label><input id="generalNewPct" type="number" min="0.1" max="100" step="0.1" placeholder="%"></div><button class="primary" onclick="addGeneralActivity()">Agregar</button></div><div class="muted" style="margin-top:8px">No se puede superar el 100% del periodo.</div></div>';
   body.innerHTML=html;
 }
