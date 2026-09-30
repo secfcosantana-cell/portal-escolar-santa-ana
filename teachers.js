@@ -68,7 +68,7 @@ function teacherBackToGroups(){
 function teacherPanelActionBar(materia,grupo){
   return '<div class="teacher-panel-actions" id="teacherPanelActions">'+
     '<button class="back" onclick="teacherBackToGroups()">← Regresar a mis grupos</button>'+
-    '<button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;'+escapeHtml(materia||'')+'&quot;,&quot;'+escapeHtml(grupo||'')+'&quot;)">📥 Descargar Excel para imprimir</button>'+
+    '<button class="primary teacher-download-btn" onclick="descargarTablaCalificacionesExcel(&quot;'+escapeHtml(materia||'')+'&quot;,&quot;'+escapeHtml(grupo||'')+'&quot;)">📥 Descargar Excel</button>'+
   '</div>';
 }
 
