@@ -379,6 +379,7 @@ function renderPhysicsTeacher(){
   });
 
   html+='</tbody></table></div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="secondary" onclick="descargarTablaCalificacionesExcel(\'Física\',\'2.º A\')">📥 Descargar Excel</button></div>'+
     '<p class="muted physics-help">Los cambios se guardan directamente en Google Sheets. Los alumnos solo pueden consultar sus resultados.</p>'+
     '</div>';
 
