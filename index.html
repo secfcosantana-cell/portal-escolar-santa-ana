@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#003c32">
-<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=37">
+<link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css?v=38">
 <title>Portal Escolar</title>
 </head>
 <body>
@@ -25,10 +25,10 @@
     <p>Un espacio digital para aprender, organizarnos y fortalecer<br class="desktop-only"> nuestra comunidad educativa.</p>
   </div>
   <div class="hero-access">
-    <button onclick="openStudentDirectory()"><span class="access-icon">👥</span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
-    <button onclick="teacher()"><span class="access-icon">🧑‍🏫</span><b>Acceso<br>Docentes</b><strong>›</strong></button>
-    <button onclick="showParentAccess()"><span class="access-icon">👨‍👩‍👧</span><b>Acceso<br>Padres de Familia</b><strong>›</strong></button>
-    <button onclick="openResources()"><span class="access-icon">📄</span><b>Recursos<br>Educativos</b><strong>›</strong></button>
+    <button onclick="openStudentDirectory()"><span class="access-icon"><img src="./assets/icon-alumnos.svg" alt=""></span><b>Acceso<br>Alumnos</b><strong>›</strong></button>
+    <button onclick="teacher()"><span class="access-icon"><img src="./assets/icon-docentes.svg" alt=""></span><b>Acceso<br>Docentes</b><strong>›</strong></button>
+    <button onclick="showParentAccess()"><span class="access-icon"><img src="./assets/icon-familias.svg" alt=""></span><b>Acceso<br>Padres de Familia</b><strong>›</strong></button>
+    <button onclick="openResources()"><span class="access-icon"><img src="./assets/icon-recursos.svg" alt=""></span><b>Recursos<br>Educativos</b><strong>›</strong></button>
   </div>
 </section>
 <div class="hero-footer"><span>📍 Santa Ana Bathá, Chilcuautla, Hidalgo</span><span>▱ <b>Educación para un mejor futuro</b></span></div>
@@ -39,8 +39,8 @@
 <div class="resource-launch hidden"><div><b>📚 Recursos educativos</b><span>PDF, videos, páginas educativas y materiales descargables por materia.</span></div><button class="secondary" onclick="openResources()">Abrir recursos →</button></div><section id="home" class="hidden"><div class="section-title"><div><div class="mini-label">DOCENTE</div><h2>Consulta de actividades</h2><p>Selecciona a tu docente para comenzar.</p></div><div class="section-line"></div></div><div class="grid">
 <article class="subject subject-alfredo" onclick="openStudentDirectory()"><div class="subject-img"><img src="./assets/alfredo-materias.svg" alt="Materias"></div><div class="subject-body"><div class="subject-icon">👨‍🏫</div><h3>Alfredo</h3><span class="badge">CONSULTAR</span></div></article>
 </div><div class="quick-info"><div>🔒 <b>Acceso protegido</b><span>Consulta personal con PIN</span></div><div>📈 <b>Seguimiento</b><span>Avance actualizado</span></div><div>📱 <b>Desde cualquier dispositivo</b><span>Portal instalable</span></div></div><div class="center"><button class="secondary teacher-btn" onclick="teacher()">🔐 Acceso docente</button></div></section>
-<section id="resources" class="hidden"><div id="resourcesBox"></div></section><section id="studentDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="studentBox"></div></section><section id="physics" class="hidden"><button class="back" onclick="home()">← Materias</button><div id="physicsBox"></div></section>
-<section id="teacher" class="hidden"><button class="back" onclick="home()">← Materias</button><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
+<section id="resources" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="resourcesBox"></div></section><section id="studentDirectory" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="studentDirectoryBox"></div></section><section id="teacherDirectory" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="teacherDirectoryBox"></div></section><section id="student" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="studentBox"></div></section><section id="physics" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><div id="physicsBox"></div></section>
+<section id="teacher" class="hidden portal-section"><div class="section-homebar"><button class="back" onclick="landing()">← Volver a inicio</button></div><h2>Panel docente · Biología</h2><select id="tg" onchange="teacherTable()"></select><div id="table"></div></section>
 </main><footer>Portal Escolar · Piloto definitivo</footer></div>
 <script src="./app-local.js?v=27"></script><script src="./physics.js?v=32"></script><script src="./teachers.js?v=30"></script><script src="./resources.js?v=2"></script>
 <script>
@@ -56,6 +56,6 @@ async function installPortal(){
 </script><script>
 function showParentAccess(){alert('El acceso para Padres de Familia se habilitará próximamente.')}
 </script><script>
-function landing(){home();$('home').classList.add('hidden');$('studentDirectory')?.classList.add('hidden');$('teacherDirectory')?.classList.add('hidden');$('student')?.classList.add('hidden');$('teacher')?.classList.add('hidden');$('physics')?.classList.add('hidden');$('resources')?.classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'});}\nfunction showAbout(){alert("Escuela Secundaria General Santa Ana Bathá · Chilcuautla, Hidalgo.");}
+function landing(){home();document.querySelector('.hero-target')?.classList.remove('hidden');document.querySelector('.hero-footer')?.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}\nfunction showAbout(){alert("Escuela Secundaria General Santa Ana Bathá · Chilcuautla, Hidalgo.");}
 function showContact(){alert("Contacto escolar: utiliza el acceso docente o la dirección de la escuela para comunicación institucional.");}
 </script></body></html>
