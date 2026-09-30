@@ -153,3 +153,201 @@ footer{letter-spacing:.05em}
 .subject-alfredo .subject-img{height:180px;}
 .subject-alfredo .subject-img img{width:100%;height:100%;object-fit:cover;display:block;}
 .subject-alfredo .subject-body p{font-size:.92rem;}
+
+
+/* ===== PORTAL MULTIASIGNATURA · ESTILO ACADÉMICO NEUTRO ===== */
+/* El portal ya no utiliza el verde como color dominante. */
+:root{
+  --deep:#17324d;
+  --green:#315f85;
+  --mint:#eaf1f7;
+  --gold:#b58a3a;
+  --ink:#263746;
+  --soft:#f5f8fb;
+}
+
+body{
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 12%,rgba(49,95,133,.10),transparent 24%),
+    radial-gradient(circle at 92% 20%,rgba(91,112,150,.09),transparent 25%),
+    linear-gradient(135deg,#f7f9fc 0%,#eef3f8 48%,#f8fafc 100%);
+}
+
+body:after{
+  background:linear-gradient(90deg,transparent,var(--gold),#9db5c9,var(--gold),transparent);
+}
+
+.screen{
+  background:
+    radial-gradient(circle at 15% 20%,rgba(255,255,255,.15),transparent 22%),
+    radial-gradient(circle at 88% 25%,rgba(146,178,208,.18),transparent 26%),
+    linear-gradient(135deg,#17324d 0%,#315f85 52%,#456b91 100%);
+}
+
+.login-card:before{
+  background:linear-gradient(90deg,var(--gold),#9db5c9,var(--gold));
+}
+
+.login-card .eyebrow,
+.eyebrow{
+  color:#315f85;
+}
+
+.login-card h1,
+.hero h2,
+.section-title h2,
+.teacher-menu-head h2,
+.teacher-profile-title h2{
+  color:#17324d;
+}
+
+.primary{
+  background:linear-gradient(100deg,#17324d,#315f85);
+  box-shadow:0 10px 24px rgba(23,50,77,.22);
+}
+
+.primary:hover{
+  box-shadow:0 15px 30px rgba(23,50,77,.28);
+}
+
+header{
+  background:linear-gradient(105deg,#17324d,#315f85 55%,#496f92);
+}
+
+.hero{
+  background:
+    radial-gradient(circle at 78% 48%,rgba(126,164,195,.20),transparent 24%),
+    linear-gradient(110deg,#e8f0f7 0%,#ffffff 43%,#edf3f8 100%);
+  border-color:#d6e1ea;
+  box-shadow:0 18px 50px rgba(23,50,77,.12);
+}
+
+.hero:before{
+  background:linear-gradient(180deg,#c8d9e7,#a9c1d4);
+}
+
+.hero:after{
+  background:linear-gradient(135deg,#e0e9f1,#c6d8e6);
+}
+
+.hero-pills span{
+  border-color:#d5e1eb;
+  color:#315f85;
+}
+
+.hero-art:before{
+  background:radial-gradient(circle,rgba(255,255,255,.9),rgba(126,164,195,.12) 48%,transparent 70%);
+}
+
+/* El microscopio queda completamente estático. */
+.hero-art img{
+  animation:none!important;
+}
+
+.orbit{
+  border-color:rgba(79,116,147,.30);
+  animation:none!important;
+}
+
+.hero-art strong{
+  background:#17324d;
+}
+
+.welcome-strip{
+  background:linear-gradient(105deg,#17324d,#315f85 58%,#496f92);
+  box-shadow:0 14px 34px rgba(23,50,77,.18);
+}
+
+.section-line{
+  background:linear-gradient(90deg,#a9bfd2,transparent);
+}
+
+.subject:hover{
+  border-color:#a9bfd2;
+  box-shadow:0 20px 42px rgba(23,50,77,.16);
+}
+
+.subject-icon{
+  color:#315f85;
+}
+
+.badge,
+.teacher-lock,
+.teacher-count{
+  background:#edf3f8;
+  color:#315f85;
+}
+
+.quick-info>div{
+  color:#315f85;
+  border-color:#dbe5ed;
+}
+
+.teacher-card:hover,
+.teacher-group-card:hover{
+  border-color:#a9bfd2;
+}
+
+.teacher-card.teacher-active{
+  background:linear-gradient(145deg,#fff,#edf3f8);
+}
+
+.teacher-avatar,
+.teacher-group-card .group-icon{
+  background:#edf3f8;
+  box-shadow:0 7px 18px rgba(23,50,77,.10);
+}
+
+.teacher-name{
+  color:#264762;
+}
+
+.teacher-role,
+.muted{
+  color:#667887;
+}
+
+.box,
+.tableWrap{
+  border-color:#dbe5ed;
+  box-shadow:0 12px 32px rgba(23,50,77,.08);
+}
+
+.table th{
+  background:linear-gradient(180deg,#eef4f8,#e5edf4);
+  color:#315f85;
+}
+
+.total,
+.percent{
+  color:#315f85;
+}
+
+.progress{
+  background:#e4ebf1;
+}
+
+.bar{
+  background:linear-gradient(90deg,#315f85,#7195b3);
+}
+
+.back,
+.secondary{
+  background:#eaf1f7;
+  color:#315f85;
+}
+
+.teacher-sheets-box{
+  border-color:#d5e1eb;
+  background:linear-gradient(100deg,#f1f6fa,#fff);
+}
+
+.student-help{
+  border-color:#d5e1eb;
+}
+
+/* El portal es estático: sin animaciones decorativas. */
+*,*:before,*:after{
+  animation:none!important;
+}
