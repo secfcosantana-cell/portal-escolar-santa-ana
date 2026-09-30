@@ -57,7 +57,23 @@ function openTeacherProfile(id){
   html+='</div></div>';
   box.innerHTML=html;
 }
+function teacherBackToGroups(){
+  const id=currentTeacherId||'';
+  $('teacher').classList.add('hidden');
+  $('physics').classList.add('hidden');
+  $('teacherDirectory').classList.remove('hidden');
+  if(id)openTeacherProfile(id);else renderTeacherDirectory();
+}
+
+function teacherPanelActionBar(materia,grupo){
+  return '<div class="teacher-panel-actions">'+
+    '<button class="back" onclick="teacherBackToGroups()">← Regresar a mis grupos</button>'+
+    '<button class="primary" onclick="descargarTablaCalificacionesExcel(\\''+escapeHtml(materia||'')+'\\',\\''+escapeHtml(grupo||'')+'\\')">📥 Descargar Excel para imprimir</button>'+
+  '</div>';
+}
+
 function openFranciscoGroup(group){
+  currentTeacherId='francisco';
   // Limpiar el estado de los módulos generales antes de abrir Biología/Física.
   generalTeacherSubject='';
   generalTeacherData=null;
@@ -74,7 +90,7 @@ function openFranciscoGroup(group){
     $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
     const oldManager=$('biologyActivityManager');
     if(oldManager) oldManager.remove();
-    $('tg').insertAdjacentHTML('afterend','<div id="biologyActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="openBiologyActivityManager()">⚙️ Administrar actividades</button><button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;Biología&quot;,document.getElementById(&quot;tg&quot;).value)">📥 Descargar Excel para imprimir</button></div></div>');
+    $('tg').insertAdjacentHTML('afterend',teacherPanelActionBar('Biología','1.º '+code)+'<div id="biologyActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openBiologyActivityManager()">⚙️ Administrar actividades</button></div>');
     const pin=teacherPinSession||TEACHER_PIN;
     const url=BIOLOGY_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(pin)+'&materia='+encodeURIComponent('Biología')+'&_='+Date.now();
     jsonpBiology(url,function(d){
@@ -139,12 +155,14 @@ const GENERAL_GROUP_COUNTS={
 let generalTeacherSubject='';
 let generalTeacherData=null;
 let generalTeacherAssignment=null;
+let currentTeacherId='';
 
 function normalizarGeneralGrupo_(v){return String(v??'').trim().toUpperCase().replace(/\s+/g,' ').replace(/°/g,'º').replace(/\./g,'');}
 function normalizarGeneralNumero_(v){const t=String(v??'').trim().replace(/[^\d]/g,'');return t?String(Number(t)):'';}
 function generalActivityWeight_(a){const n=Number(String(a?.['Valor_%']??a?.['Valor %']??a?.Porcentaje??a?.Valor??0).replace(',','.'));return isNaN(n)?0:n;}
 
 function openGenericTeacherGroup(teacherId,groupLabel){
+  currentTeacherId=teacherId;
   const t=TEACHER_DIRECTORY.find(x=>x.id===teacherId);if(!t)return;
   generalTeacherSubject=t.role;generalTeacherData=null;generalTeacherAssignment=null;
   $('teacherDirectory').classList.add('hidden');$('teacher').classList.remove('hidden');
@@ -156,7 +174,7 @@ function openGenericTeacherGroup(teacherId,groupLabel){
   // Evitar que quede visible el administrador de Biología al cambiar a otro docente/materia.
   const oldManager=$('generalActivityManager');if(oldManager)oldManager.remove();
   const oldBiologyManager=$('biologyActivityManager');if(oldBiologyManager)oldBiologyManager.remove();
-  $('tg').insertAdjacentHTML('afterend','<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button><button class="primary" onclick="descargarTablaCalificacionesExcel(generalTeacherSubject,document.getElementById(&quot;tg&quot;).value)">📥 Descargar Excel para imprimir</button></div></div>');
+  $('tg').insertAdjacentHTML('afterend',teacherPanelActionBar(generalTeacherSubject,selectedGeneralGroup)+'<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button></div>');
   const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(t.role)+'&_='+Date.now();
   jsonpBiology(url,function(d){if(!d||!d.ok){$('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar '+t.role+'.')+'</div>';return;}generalTeacherData=d;renderGeneralTeacherTable();},function(){$('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.</div>';});
 }
