@@ -442,8 +442,8 @@ function renderPhysicsActivityManager(all){
     (String(period)===String(current)?' · 🟢 ACTUAL':'')+' </div>';
 
   if(String(period)!==String(current)){
-    html+='<div style="margin-top:8px"><button class="secondary" onclick="setPhysicsCurrentPeriod(\\''+
-      period+'\\')">Usar Periodo '+period+' como actual</button></div>';
+    html+='<div style="margin-top:8px"><button class="secondary" onclick="setPhysicsCurrentPeriod(\''+
+      period+'\')">Usar Periodo '+period+' como actual</button></div>';
   }
 
   html+='<div style="overflow:auto;margin-top:10px"><table class="table"><thead><tr>'+
@@ -457,12 +457,12 @@ function renderPhysicsActivityManager(all){
       '<td>'+Number(a.porcentaje)+'%</td>'+
       '<td>'+(a.activa?'🟢 Activa':'⚪ Inactiva')+'</td>'+
       '<td style="white-space:nowrap">'+
-        '<button class="secondary" onclick="editPhysicsActivity(\\''+
-          escapeHtml(a.idActividad)+'\\',\\''+
-          escapeHtml(a.actividad).replace(/'/g,"&#39;")+'\\','+
+        '<button class="secondary" onclick="editPhysicsActivity(\''+
+          escapeHtml(a.idActividad)+'\',\''+
+          escapeHtml(a.actividad).replace(/'/g,"&#39;")+'\','+
           Number(a.porcentaje)+','+Number(a.periodo||1)+')">✏️ Editar</button> '+
-        '<button class="secondary" onclick="togglePhysicsActivity(\\''+
-          escapeHtml(a.idActividad)+'\\','+(!a.activa)+')">'+
+        '<button class="secondary" onclick="togglePhysicsActivity(\''+
+          escapeHtml(a.idActividad)+'\','+(!a.activa)+')">'+
           (a.activa?'Desactivar':'Activar')+
         '</button>'+
       '</td>'+
