@@ -11,6 +11,8 @@ const RESOURCE_ITEMS = [
 ];
 
 function openResources(){
+  document.querySelector('.hero-target')?.classList.add('hidden');
+  document.querySelector('.hero-footer')?.classList.add('hidden');
   $('home').classList.add('hidden');
   $('studentDirectory')?.classList.add('hidden');
   $('teacherDirectory')?.classList.add('hidden');
