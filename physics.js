@@ -304,11 +304,29 @@ function renderPhysicsTeacher(){
 
   window.physicsCurrentAssignment=asignacion;
 
-  const actividades=(asignacion.actividades||[]).filter(a=>
+  let actividades=(asignacion.actividades||[]).filter(a=>
     normalizarPhysicsTexto(a.Activa)!=='no' &&
     normalizarPhysicsTexto(a.Activa)!=='false' &&
     normalizarPhysicsTexto(a.Activa)!=='0'
   );
+
+  /*
+   * Respaldo para Física 2.º A:
+   * si el backend devuelve la asignación pero no las actividades,
+   * mostramos las actividades activas del formato de Física para
+   * que el docente pueda capturar las calificaciones.
+   */
+  if(!actividades.length){
+    actividades=[
+      {ID_Actividad:'A1',Actividad:'Actividad 1','Valor_%':15,Activa:'SI'},
+      {ID_Actividad:'A2',Actividad:'Actividad 2','Valor_%':15,Activa:'SI'},
+      {ID_Actividad:'A3',Actividad:'Actividad 3','Valor_%':15,Activa:'SI'},
+      {ID_Actividad:'A4',Actividad:'Actividad 4','Valor_%':20,Activa:'SI'},
+      {ID_Actividad:'A5',Actividad:'Actividad 5','Valor_%':15,Activa:'SI'},
+      {ID_Actividad:'A6',Actividad:'Actividad 6','Valor_%':10,Activa:'SI'},
+      {ID_Actividad:'A7',Actividad:'Actividad 7','Valor_%':10,Activa:'SI'}
+    ];
+  }
 
   const alumnos=asignacion.alumnos||[];
   const evaluaciones=asignacion.evaluaciones||[];
