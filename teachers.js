@@ -82,7 +82,7 @@ function openFranciscoGroup(group){
       window.teacherData=d;
       teacherTable();
     },function(){
-      $('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de Biología.</div>';
+      $('table').innerHTML='<div class="box msg"><b>No respondió Google Sheets de Biología.</b><br><span class="muted">El portal sí llegó al módulo, pero el servicio de Google Apps Script no devolvió datos.</span><br><button class="secondary" style="margin-top:10px" onclick="openFranciscoGroup(\'Biología · 1.º '+(document.getElementById(\'tg\')?.value||\'A\')+'\')">🔄 Reintentar conexión</button></div>';
     });
   }else if(group.startsWith('Física')){
     $('teacherDirectory').classList.add('hidden');
@@ -287,6 +287,7 @@ function teacherTable(){
   if(typeof generalTeacherSubject!=='undefined' && generalTeacherSubject){renderGeneralTeacherTable();return;}
   if(!window.teacherData)return;
   const g=$('tg').value;
+  const code=g||'A';
   const fullGroup='1º '+g;
   const asignacion=(window.teacherData.asignaciones||[]).find(a=>normalizarBioGrupo_(a.grupo)===normalizarBioGrupo_(fullGroup));
   if(!asignacion){$('table').innerHTML='<div class="box msg">No se encontró la asignación de Biología '+escapeHtml(fullGroup)+'.</div>';return;}
@@ -450,7 +451,7 @@ function jsonpBiology(url,onSuccess,onError){
   let finished=false;
   const script=document.createElement('script');
   const cleanup=()=>{if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName]}catch(e){window[callbackName]=undefined}};
-  const timer=setTimeout(()=>{if(finished)return;finished=true;cleanup();if(onError)onError(new Error('Tiempo de espera agotado.'));},30000);
+  const timer=setTimeout(()=>{if(finished)return;finished=true;cleanup();if(onError)onError(new Error('Tiempo de espera agotado.'));},12000);
   window[callbackName]=data=>{if(finished)return;finished=true;clearTimeout(timer);cleanup();onSuccess(data)};
   script.onerror=()=>{if(finished)return;finished=true;clearTimeout(timer);cleanup();if(onError)onError(new Error('No se pudo cargar Google Apps Script.'))};
   script.src=url+(url.indexOf('?')>=0?'&':'?')+'callback='+encodeURIComponent(callbackName);
