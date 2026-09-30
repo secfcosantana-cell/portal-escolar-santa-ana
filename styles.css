@@ -743,3 +743,12 @@ body{min-height:100svh;overflow-x:hidden}
   }
   .hero-target::after{width:48%}
 }
+
+/* v53 · USAR EXCLUSIVAMENTE LA IMAGEN PROPORCIONADA POR EL USUARIO */
+.hero-target{
+  background-color:#0d4d83!important;
+}
+.hero-target::before,
+.hero-target::after{
+  display:none!important;
+}
