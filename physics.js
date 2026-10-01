@@ -149,49 +149,22 @@ function jsonpPhysics(url,onSuccess,onError){
 
 function postPhysicsSave(url){
   return new Promise(function(resolve,reject){
-    const frameName='physicsSaveFrame_'+Date.now();
-    const iframe=document.createElement('iframe');
-    iframe.name=frameName;
-    iframe.style.display='none';
-    document.body.appendChild(iframe);
-
-    const form=document.createElement('form');
-    form.method='POST';
-    form.action=PHYSICS_STUDENT_SCRIPT_URL;
-    form.target=frameName;
-    form.style.display='none';
-
-    const query=url.split('?')[1]||'';
-    const params=new URLSearchParams(query);
-
-    params.forEach(function(value,key){
-      const input=document.createElement('input');
-      input.type='hidden';
-      input.name=key;
-      input.value=value;
-      form.appendChild(input);
+    /*
+     * Guardado real mediante GET + JSONP.
+     * El backend de Física responde por doGet(action=save).
+     * Antes se enviaba POST a un backend que no tenía doPost(),
+     * y el iframe se consideraba "cargado" aunque la calificación
+     * no hubiera sido guardada.
+     */
+    jsonpPhysics(url,function(data){
+      if(data && data.ok){
+        resolve(data);
+      }else{
+        reject(new Error((data && data.error)||'Google Sheets no confirmó el guardado.'));
+      }
+    },function(err){
+      reject(err || new Error('No se pudo enviar la calificación a Google Sheets.'));
     });
-
-    document.body.appendChild(form);
-
-    let done=false;
-    const finish=function(ok){
-      if(done)return;
-      done=true;
-      setTimeout(function(){
-        if(form.parentNode)form.parentNode.removeChild(form);
-        if(iframe.parentNode)iframe.parentNode.removeChild(iframe);
-      },300);
-      if(ok)resolve();
-      else reject(new Error('No se pudo enviar la calificación a Google Sheets.'));
-    };
-
-    iframe.onload=function(){ finish(true); };
-    iframe.onerror=function(){ finish(false); };
-
-    form.submit();
-
-    setTimeout(function(){ if(!done) finish(true); },2500);
   });
 }
 
