@@ -301,6 +301,8 @@ function renderPhysicsTeacher(){
     ];
   }
 
+  asignacion.actividades=actividades;
+
   const alumnos=asignacion.alumnos||[];
   const evaluaciones=asignacion.evaluaciones||[];
 
