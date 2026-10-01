@@ -778,3 +778,22 @@ body{min-height:100svh;overflow-x:hidden}
 .teacher-panel-actions .back{margin:0;padding:8px 12px}
 .teacher-panel-actions .teacher-download-btn{display:inline-flex!important;width:auto!important;min-width:0!important;margin:0!important;padding:8px 14px!important;font-size:.86rem!important;line-height:1.2}
 @media(max-width:600px){.teacher-panel-actions{gap:8px}.teacher-panel-actions .teacher-download-btn{width:auto!important}}
+
+/* v71 · Recursos educativos */
+.resource-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
+.resource-head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px}
+.resource-card{background:#fff;border:1px solid #d9e3ec;border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(20,55,85,.07)}
+.resource-type{font-weight:800;color:#1d527e;margin-bottom:8px}
+.resource-subject{font-size:.82rem;font-weight:800;color:#668096;text-transform:uppercase;letter-spacing:.04em}
+.resource-card h3{margin:8px 0 6px;color:#183c5a}
+.resource-card p{min-height:42px;color:#62778a}
+.resource-btn{display:inline-flex;margin-top:10px;text-decoration:none}
+.resource-admin{background:#fff;border:1px solid #d9e3ec;border-radius:18px;padding:22px;box-shadow:0 8px 24px rgba(20,55,85,.07)}
+.resource-admin-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.resource-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.resource-form-grid label{display:flex;flex-direction:column;gap:6px;font-weight:800;color:#294d69}
+.resource-form-grid input,.resource-form-grid select,.resource-form-grid textarea{font:inherit;padding:10px 12px;border:1px solid #cbd8e3;border-radius:10px;background:#fff}
+.resource-form-wide{grid-column:1/-1}
+.resource-admin-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:700px){.resource-form-grid{grid-template-columns:1fr}.resource-form-wide{grid-column:auto}.resource-admin-actions{justify-content:stretch}.resource-admin-actions button{flex:1}}
