@@ -1,0 +1,56 @@
+// GOOGLE APPS SCRIPT - RECURSOS EDUCATIVOS
+const ADMIN_PIN='2468';
+const FOLDER_NAME='Portal Escolar - Recursos';
+const SHEET_NAME='RECURSOS_PORTAL';
+const SHEET_FILE_NAME='Portal Escolar - Recursos';
+
+function getStore_(){
+  const props=PropertiesService.getScriptProperties();
+  let id=props.getProperty('RESOURCE_SHEET_ID'),ss;
+  if(id){try{ss=SpreadsheetApp.openById(id);}catch(e){}}
+  if(!ss){ss=SpreadsheetApp.create(SHEET_FILE_NAME);props.setProperty('RESOURCE_SHEET_ID',ss.getId());}
+  let sh=ss.getSheetByName(SHEET_NAME);
+  if(!sh)sh=ss.insertSheet(SHEET_NAME);
+  if(sh.getLastRow()===0)sh.appendRow(['ID','Fecha','Materia','Grado','Grupo','Titulo','Descripcion','Tipo','URL','Archivo','Activo']);
+  return sh;
+}
+function getFolder_(){const it=DriveApp.getFoldersByName(FOLDER_NAME);return it.hasNext()?it.next():DriveApp.createFolder(FOLDER_NAME);}
+function out_(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}
+function doGet(e){
+  const p=e.parameter||{},action=p.action||'list';
+  if(action==='list'){
+    const sh=getStore_(),v=sh.getDataRange().getValues();
+    const items=v.length<2?[]:v.slice(1).filter(r=>String(r[10]||'SI').toUpperCase()!=='NO').map(r=>({id:String(r[0]||''),fecha:String(r[1]||''),materia:String(r[2]||''),grado:String(r[3]||''),grupo:String(r[4]||''),titulo:String(r[5]||''),descripcion:String(r[6]||''),tipo:String(r[7]||'ENLACE'),url:String(r[8]||''),archivo:String(r[9]||''),descarga:!!String(r[9]||'')}));
+    const payload=JSON.stringify({ok:true,items:items});
+    if(p.callback)return ContentService.createTextOutput(p.callback+'('+payload+');').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    return out_({ok:true,items:items});
+  }
+  if(action==='delete'){
+    if(String(p.pin||'')!==ADMIN_PIN)return out_({ok:false,error:'PIN incorrecto'});
+    const sh=getStore_(),v=sh.getDataRange().getValues();
+    for(let i=1;i<v.length;i++)if(String(v[i][0]||'')===String(p.id||'')){sh.getRange(i+1,11).setValue('NO');return out_({ok:true});}
+    return out_({ok:false,error:'Recurso no encontrado'});
+  }
+  return out_({ok:false,error:'Accion no reconocida'});
+}
+function doPost(e){
+  try{
+    const p=e.parameter||{};
+    if(String(p.action||'')!=='saveResource')return out_({ok:false,error:'Accion no reconocida'});
+    if(String(p.pin||'')!==ADMIN_PIN)return out_({ok:false,error:'PIN incorrecto'});
+    const materia=String(p.materia||'').trim(),titulo=String(p.titulo||'').trim();
+    if(!materia||!titulo)return out_({ok:false,error:'Materia y titulo son obligatorios'});
+    let url=String(p.url||'').trim(),archivo='';
+    if(p.fileBase64){
+      const bytes=Utilities.base64Decode(String(p.fileBase64));
+      const blob=Utilities.newBlob(bytes,String(p.mimeType||'application/octet-stream'),String(p.fileName||'recurso'));
+      const file=getFolder_().createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);
+      url=file.getUrl();archivo=file.getName();
+    }
+    if(!url)return out_({ok:false,error:'Falta un enlace o archivo'});
+    const id='REC-'+Utilities.getUuid().slice(0,8).toUpperCase();
+    getStore_().appendRow([id,new Date(),materia,String(p.grado||''),String(p.grupo||''),titulo,String(p.descripcion||''),String(p.tipo||'ENLACE').toUpperCase(),url,archivo,'SI']);
+    return out_({ok:true,id:id,url:url,archivo:archivo});
+  }catch(err){return out_({ok:false,error:String(err)});}
+}
