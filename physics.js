@@ -214,7 +214,9 @@ async function physicsTeacherLogin(){
     }
 
     window.physicsTeacherData=d;
-    renderPhysicsTeacher();
+    loadPhysicsTeacherActivities(function(){
+      renderPhysicsTeacher();
+    });
   };
 
   script=document.createElement('script');
@@ -255,6 +257,31 @@ async function physicsTeacherLogin(){
 
 
 /************************************************************
+ * CARGAR ACTIVIDADES Y PORCENTAJES REALES DEL CATÁLOGO
+ ************************************************************/
+function loadPhysicsTeacherActivities(done){
+  const finish=typeof done==='function'?done:function(){};
+  const u=PHYSICS_STUDENT_SCRIPT_URL+
+    '?action=activityAdmin&op=list&pin='+encodeURIComponent(physicsTeacherPinSession||'2468')+
+    '&materia='+encodeURIComponent('Física')+
+    '&_='+Date.now();
+
+  jsonpPhysics(u,function(d){
+    if(d&&d.ok){
+      window.physicsCurrentPeriod=String(d.periodoActual||d.PeriodoActual||'1')
+        .replace(/^Periodo\s*/i,'').trim()||'1';
+      window.physicsActivityCatalog=(d.actividades||[]).map(physicsActivityRecord);
+    }else{
+      window.physicsActivityCatalog=[];
+    }
+    finish();
+  },function(){
+    window.physicsActivityCatalog=[];
+    finish();
+  });
+}
+
+/************************************************************
  * PANEL DOCENTE NUMÉRICO
  ************************************************************/
 
@@ -284,21 +311,14 @@ function renderPhysicsTeacher(){
   );
 
   /*
-   * Respaldo para Física 2.º A:
-   * si el backend devuelve la asignación pero no las actividades,
-   * mostramos las actividades activas del formato de Física para
-   * que el docente pueda capturar las calificaciones.
+   * El catálogo de Administración de actividades es la fuente de verdad
+   * para los porcentajes. No se deben usar porcentajes de respaldo,
+   * porque pueden no coincidir con los que el docente asignó.
    */
-  if(!actividades.length){
-    actividades=[
-      {ID_Actividad:'A1',Actividad:'Actividad 1','Valor_%':15,Activa:'SI'},
-      {ID_Actividad:'A2',Actividad:'Actividad 2','Valor_%':15,Activa:'SI'},
-      {ID_Actividad:'A3',Actividad:'Actividad 3','Valor_%':15,Activa:'SI'},
-      {ID_Actividad:'A4',Actividad:'Actividad 4','Valor_%':20,Activa:'SI'},
-      {ID_Actividad:'A5',Actividad:'Actividad 5','Valor_%':15,Activa:'SI'},
-      {ID_Actividad:'A6',Actividad:'Actividad 6','Valor_%':10,Activa:'SI'},
-      {ID_Actividad:'A7',Actividad:'Actividad 7','Valor_%':10,Activa:'SI'}
-    ];
+  if(!actividades.length && Array.isArray(window.physicsActivityCatalog)){
+    actividades=window.physicsActivityCatalog
+      .filter(a=>String(a.periodo||'1')===String(window.physicsCurrentPeriod||'1'))
+      .filter(a=>a.activa===true);
   }
 
   asignacion.actividades=actividades;
