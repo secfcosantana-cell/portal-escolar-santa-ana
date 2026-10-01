@@ -281,6 +281,20 @@ function loadPhysicsTeacherActivities(done){
   });
 }
 
+function physicsAssignmentId(asignacion){
+  if(!asignacion)return '';
+  return String(
+    asignacion.idAsignacion ??
+    asignacion.ID_Asignacion ??
+    asignacion['ID_Asignacion'] ??
+    asignacion.ID_Asignación ??
+    asignacion['ID_Asignación'] ??
+    asignacion.id ??
+    asignacion.ID ??
+    ''
+  ).trim();
+}
+
 /************************************************************
  * PANEL DOCENTE NUMÉRICO
  ************************************************************/
@@ -363,7 +377,7 @@ function renderPhysicsTeacher(){
     actividades.forEach(a=>{
 
       const ev=evaluaciones.find(x=>
-        String(x.ID_Asignación||'').trim()===String(asignacion.idAsignacion||'').trim() &&
+        String(x.ID_Asignación||x.ID_Asignacion||'').trim()===physicsAssignmentId(asignacion) &&
         normalizarPhysicsNumero(x['No. lista']||x.No_Lista)===normalizarPhysicsNumero(lista) &&
         String(x.ID_Actividad||'').trim()===String(a.ID_Actividad||'').trim()
       );
@@ -630,7 +644,7 @@ async function savePhysicsGrade(input){
     const u=PHYSICS_STUDENT_SCRIPT_URL+
       '?action=save'+
       '&pin='+encodeURIComponent(physicsTeacherPinSession)+
-      '&idAsignacion='+encodeURIComponent(asignacion.idAsignacion)+
+      '&idAsignacion='+encodeURIComponent(physicsAssignmentId(asignacion))+
       '&lista='+encodeURIComponent(lista)+
       '&idActividad='+encodeURIComponent(idActividad)+
       '&calificacion='+encodeURIComponent(value)+
@@ -650,7 +664,7 @@ async function savePhysicsGrade(input){
       ev['Calificación']=value===''?'':Number(value);
     }else if(value!==''){
       ev={
-        ID_Asignación:asignacion.idAsignacion,
+        ID_Asignación:physicsAssignmentId(asignacion),
         'No. lista':lista,
         ID_Actividad:idActividad,
         Calificación:Number(value)
