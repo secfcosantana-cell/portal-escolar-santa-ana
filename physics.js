@@ -473,8 +473,18 @@ function physicsActivityRecord(a){
   if(!periodo)periodo='1';
   const rawPct=a.porcentaje ?? a.Porcentaje ?? a['Valor_%'] ?? a['Valor %'] ?? a.Valor ?? 0;
   const pct=Number(String(rawPct??0).replace(',','.'));
+  const idActividad =
+    String(
+      a.idActividad ??
+      a.ID_Actividad ??
+      a['ID_Actividad'] ??
+      a.ID ??
+      ''
+    ).trim();
+
   return {
-    idActividad:String(a.idActividad ?? a.ID_Actividad ?? a.ID ?? '').trim(),
+    idActividad:idActividad,
+    ID_Actividad:idActividad,
     actividad:String(a.actividad ?? a.Actividad ?? a.Nombre ?? a.nombre ?? '').trim(),
     porcentaje:isNaN(pct)?0:pct,
     periodo:periodo,
