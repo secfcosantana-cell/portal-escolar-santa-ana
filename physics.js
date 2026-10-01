@@ -647,6 +647,8 @@ async function savePhysicsGrade(input){
       '&idAsignacion='+encodeURIComponent(physicsAssignmentId(asignacion))+
       '&lista='+encodeURIComponent(lista)+
       '&idActividad='+encodeURIComponent(idActividad)+
+      '&materia='+encodeURIComponent('Física')+
+      '&grupo='+encodeURIComponent('2.º A')+
       '&calificacion='+encodeURIComponent(value)+
       '&_='+Date.now();
 
