@@ -8,7 +8,8 @@ const TEACHER_DIRECTORY=[
 ];
 
 function descargarTablaCalificacionesExcel(materia,grupo){
-  const table=document.querySelector('#table table');
+  // Los paneles generales usan #table; Física usa #physicsBox.
+  const table=document.querySelector('#table table, #physicsBox table');
   if(!table){alert('No hay una tabla de calificaciones para descargar.');return;}
   const clone=table.cloneNode(true);
   clone.querySelectorAll('input').forEach(input=>{const td=input.closest('td');if(td)td.textContent=input.value||'';});
@@ -365,7 +366,7 @@ function teacherTable(){
     total=Math.round(total*100)/100;
     html+='<td class="total" id="biology-total-'+escapeHtml(lista)+'">'+total+'%</td></tr>';
   });
-  html+='</tbody></table></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="secondary" onclick="descargarTablaCalificacionesExcel(\'Biología\',\'1.º '+code+'\')">📥 Descargar Excel</button></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets. El acumulado se calcula automáticamente con el valor porcentual de cada actividad.</p>';
+  html+='</tbody></table></div><p class="muted">Las calificaciones se capturan de 0 a 10 y se guardan directamente en Google Sheets. El acumulado se calcula automáticamente con el valor porcentual de cada actividad.</p>';
   $('table').innerHTML=html;
 }
 
