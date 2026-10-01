@@ -748,13 +748,15 @@ function actualizarPhysicsTotal(lista){
 function physicsActivityWeight(a){
 
   const value=
+    a.porcentaje ??
+    a.Porcentaje ??
     a['Valor_%'] ??
     a['Valor %'] ??
-    a['Porcentaje'] ??
-    a['Valor'] ??
+    a.Valor ??
+    a['valor_%'] ??
     0;
 
-  const n=Number(String(value).replace(',','.'));
+  const n=Number(String(value??0).replace(',','.'));
 
   return isNaN(n)?0:n;
 }
