@@ -391,7 +391,7 @@ function saveBiologyGrade(input){
 }
 
 function biologyActivityWeight(a){
-  const value=a['Valor_%']??a['Valor %']??a['Porcentaje']??a['Valor']??0;
+  const value=a['Valor_%']??a['Valor %']??a['Porcentaje']??a['Valor']??a['%']??0;
   const n=Number(String(value).replace(',','.'));
   return isNaN(n)?0:n;
 }
