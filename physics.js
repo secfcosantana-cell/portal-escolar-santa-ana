@@ -319,9 +319,9 @@ function renderPhysicsTeacher(){
   window.physicsCurrentAssignment=asignacion;
 
   let actividades=(asignacion.actividades||[]).filter(a=>
-    normalizarPhysicsTexto(a.Activa)!=='no' &&
-    normalizarPhysicsTexto(a.Activa)!=='false' &&
-    normalizarPhysicsTexto(a.Activa)!=='0'
+    normalizarPhysicsTexto(a.Activa??a.Activo??a.Estado??a.Estatus)!=='no' &&
+    normalizarPhysicsTexto(a.Activa??a.Activo??a.Estado??a.Estatus)!=='false' &&
+    normalizarPhysicsTexto(a.Activa??a.Activo??a.Estado??a.Estatus)!=='0'
   );
 
   /*
