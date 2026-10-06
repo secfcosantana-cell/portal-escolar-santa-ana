@@ -284,7 +284,7 @@ function saveGeneralGrade(input){
         const currentAsig=(generalTeacherData.asignaciones||[]).find(a=>
           String(a.idAsignacion||'').trim()===String(payload.idAsignacion).trim()
         );
-        const currentEvs=currentAsig?currentAsig.evaluaciones||():[];
+        const currentEvs=currentAsig?currentAsig.evaluaciones||[]:[];
         const currentEv=currentEvs.find(x=>
           String(x.ID_Asignación||'').trim()===String(payload.idAsignacion).trim() &&
           normalizarGeneralNumero_(x['No. lista']||x.No_Lista)===normalizarGeneralNumero_(payload.lista) &&
@@ -303,7 +303,7 @@ function saveGeneralGrade(input){
         // El guardado ya fue aceptado; si la verificación falla, conservamos
         // el dato local y permitimos continuar trabajando.
         const asig=(generalTeacherData.asignaciones||[]).find(a=>String(a.idAsignacion)===String(payload.idAsignacion));
-        const evs=asig?asig.evaluaciones||():[];
+        const evs=asig?asig.evaluaciones||[]:[];
         const ev=evs.find(x=>
           String(x.ID_Asignación||'').trim()===String(payload.idAsignacion).trim() &&
           normalizarGeneralNumero_(x['No. lista']||x.No_Lista)===normalizarGeneralNumero_(payload.lista) &&
