@@ -55,7 +55,7 @@
   }).then(function(){location.reload();}).catch(function(){location.reload();});
 })();
 </script>
-<script src="./app-local.js?v=54"></script><script src="./physics.js?v=64"></script><script src="./teachers.js?v=72"></script><script src="./resources.js?v=53"></script>
+<script src="./app-local.js?v=54"></script><script src="./physics.js?v=64"></script><script src="./teachers.js?v=73"></script><script src="./resources.js?v=53"></script>
 <script>
 let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
@@ -97,9 +97,24 @@ function portalOpenStudents(){
 function portalOpenTeachers(){
   if(typeof window.teacher === 'function'){
     window.teacher();
-  }else{
-    alert("El módulo docente todavía está cargando. Recarga una vez el portal e inténtalo nuevamente.");
+    return;
   }
+  // Evitar el falso aviso cuando el navegador todavía está terminando
+  // de cargar teachers.js. Esperamos brevemente y volvemos a comprobar.
+  var intentos=0;
+  var esperar=function(){
+    if(typeof window.teacher === 'function'){
+      window.teacher();
+      return;
+    }
+    intentos++;
+    if(intentos<20){
+      setTimeout(esperar,250);
+    }else{
+      alert("El módulo docente no pudo cargarse. Recarga el portal e inténtalo nuevamente.");
+    }
+  };
+  esperar();
 }
 window.addEventListener('load',()=>{
   document.getElementById('installBtn')?.classList.remove('hidden');
