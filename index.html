@@ -45,7 +45,7 @@
 /* v43: limpieza de Service Worker/caché para corregir versiones antiguas */
 (function(){
   if(!('serviceWorker' in navigator)) return;
-  const key='portal-cache-reset-v74';
+  const key='portal-cache-reset-v75';
   if(sessionStorage.getItem(key)==='done') return;
   sessionStorage.setItem(key,'done');
   navigator.serviceWorker.getRegistrations().then(function(regs){
@@ -55,7 +55,7 @@
   }).then(function(){location.reload();}).catch(function(){location.reload();});
 })();
 </script>
-<script src="./app-local.js?v=54"></script><script src="./physics.js?v=64"></script><script src="./teachers.js?v=73"></script><script src="./resources.js?v=53"></script>
+<script src="./app-local.js?v=54"></script><script src="./physics.js?v=64"></script><script src="./teachers.js?v=74"></script><script src="./resources.js?v=53"></script>
 <script>
 let deferredInstall=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;document.getElementById("installBtn")?.classList.remove("hidden")});
