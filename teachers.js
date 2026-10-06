@@ -221,10 +221,109 @@ function renderGeneralTeacherTable(){
 }
 function saveGeneralGrade(input){
   const value=input.value.trim();
-  if(value!==''){const grade=Number(value);if(isNaN(grade)||grade<0||grade>10){alert('La calificación debe ser un número de 0 a 10.');input.focus();return;}}
+  if(value!==''){
+    const grade=Number(value);
+    if(isNaN(grade)||grade<0||grade>10){
+      alert('La calificación debe ser un número de 0 a 10.');
+      input.focus();
+      return;
+    }
+  }
+
+  const payload={
+    action:'save',
+    pin:teacherPinSession||TEACHER_PIN,
+    idAsignacion:input.dataset.asignacion||'',
+    lista:input.dataset.lista||'',
+    idActividad:input.dataset.actividad||'',
+    calificacion:value,
+    _:Date.now()
+  };
+
   input.disabled=true;
-  const u=GENERAL_SCHOOL_SCRIPT_URL+'?action=save&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&idAsignacion='+encodeURIComponent(input.dataset.asignacion)+'&lista='+encodeURIComponent(input.dataset.lista)+'&idActividad='+encodeURIComponent(input.dataset.actividad)+'&calificacion='+encodeURIComponent(value)+'&_='+Date.now();
-  jsonpBiology(u,function(d){if(!d||!d.ok){alert((d&&d.error)||'No se pudo guardar la calificación.');input.disabled=false;return;}const asig=(generalTeacherData.asignaciones||[]).find(a=>String(a.idAsignacion)===String(input.dataset.asignacion));const evs=asig?asig.evaluaciones:[];const ev=evs.find(x=>String(x.ID_Asignación||'').trim()===String(input.dataset.asignacion).trim()&&normalizarGeneralNumero_(x['No. lista']||x.No_Lista)===normalizarGeneralNumero_(input.dataset.lista)&&String(x.ID_Actividad||'').trim()===String(input.dataset.actividad).trim());if(ev)ev.Calificación=value===''?'':Number(value);else if(value!=='')evs.push({ID_Asignación:input.dataset.asignacion,'No. lista':input.dataset.lista,ID_Actividad:input.dataset.actividad,Calificación:Number(value)});updateGeneralTotal_(input.dataset.lista);input.disabled=false;},function(){alert('No se pudo conectar con Google Sheets.');input.disabled=false;});
+  input.dataset.saving='1';
+
+  const doSave=(attempt)=>{
+    const u=GENERAL_SCHOOL_SCRIPT_URL+'?'+Object.keys(payload).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(payload[k])).join('&');
+
+    jsonpBiology(u,function(d){
+      if(!d||!d.ok){
+        if(attempt<1){ setTimeout(()=>doSave(attempt+1),500); return; }
+        alert((d&&d.error)||'No se pudo guardar la calificación.');
+        input.disabled=false;
+        delete input.dataset.saving;
+        return;
+      }
+
+      // Confirmar leyendo nuevamente Google Sheets. Esto evita que el portal
+      // muestre una calificación como guardada cuando el backend aún no la ha
+      // reflejado en la hoja.
+      const verifyUrl=GENERAL_SCHOOL_SCRIPT_URL+
+        '?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+
+        '&materia='+encodeURIComponent(generalTeacherSubject)+
+        '&_='+Date.now();
+
+      jsonpBiology(verifyUrl,function(fresh){
+        const asig=(fresh&&fresh.ok?(fresh.asignaciones||[]):[]).find(a=>
+          String(a.idAsignacion||'').trim()===String(payload.idAsignacion).trim()
+        );
+        const evs=asig?asig.evaluaciones||[]:[];
+        const ev=evs.find(x=>
+          String(x.ID_Asignación||'').trim()===String(payload.idAsignacion).trim() &&
+          normalizarGeneralNumero_(x['No. lista']||x.No_Lista)===normalizarGeneralNumero_(payload.lista) &&
+          String(x.ID_Actividad||'').trim()===String(payload.idActividad).trim()
+        );
+        const saved=ev && String(ev.Calificación??'').trim()===String(value).trim();
+
+        if(!saved && attempt<1){
+          setTimeout(()=>doSave(attempt+1),500);
+          return;
+        }
+
+        if(fresh&&fresh.ok) generalTeacherData=fresh;
+        const currentAsig=(generalTeacherData.asignaciones||[]).find(a=>
+          String(a.idAsignacion||'').trim()===String(payload.idAsignacion).trim()
+        );
+        const currentEvs=currentAsig?currentAsig.evaluaciones||():[];
+        const currentEv=currentEvs.find(x=>
+          String(x.ID_Asignación||'').trim()===String(payload.idAsignacion).trim() &&
+          normalizarGeneralNumero_(x['No. lista']||x.No_Lista)===normalizarGeneralNumero_(payload.lista) &&
+          String(x.ID_Actividad||'').trim()===String(payload.idActividad).trim()
+        );
+        if(currentEv) currentEv.Calificación=value===''?'':Number(value);
+
+        updateGeneralTotal_(payload.lista);
+        input.disabled=false;
+        delete input.dataset.saving;
+
+        if(!saved && attempt>=1){
+          alert('Google Sheets respondió, pero la calificación no quedó confirmada en la hoja. Intenta capturarla nuevamente.');
+        }
+      },function(){
+        // El guardado ya fue aceptado; si la verificación falla, conservamos
+        // el dato local y permitimos continuar trabajando.
+        const asig=(generalTeacherData.asignaciones||[]).find(a=>String(a.idAsignacion)===String(payload.idAsignacion));
+        const evs=asig?asig.evaluaciones||():[];
+        const ev=evs.find(x=>
+          String(x.ID_Asignación||'').trim()===String(payload.idAsignacion).trim() &&
+          normalizarGeneralNumero_(x['No. lista']||x.No_Lista)===normalizarGeneralNumero_(payload.lista) &&
+          String(x.ID_Actividad||'').trim()===String(payload.idActividad).trim()
+        );
+        if(ev) ev.Calificación=value===''?'':Number(value);
+        else if(value!=='') evs.push({ID_Asignación:payload.idAsignacion,'No. lista':payload.lista,ID_Actividad:payload.idActividad,Calificación:Number(value)});
+        updateGeneralTotal_(payload.lista);
+        input.disabled=false;
+        delete input.dataset.saving;
+      });
+    },function(){
+      if(attempt<1){ setTimeout(()=>doSave(attempt+1),500); return; }
+      alert('No se pudo conectar con Google Sheets para guardar la calificación.');
+      input.disabled=false;
+      delete input.dataset.saving;
+    });
+  };
+
+  doSave(0);
 }
 function updateGeneralTotal_(lista){
   const asig=generalTeacherAssignment;if(!asig)return;let total=0;
