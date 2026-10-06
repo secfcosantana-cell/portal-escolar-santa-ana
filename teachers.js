@@ -190,8 +190,23 @@ function openGenericTeacherGroup(teacherId,groupLabel){
   document.querySelectorAll('.teacher-panel-actions').forEach(function(x){x.remove();});
   cleanupTeacherPanelActions();
   $('tg').insertAdjacentHTML('afterend','<div id="generalActivityManager" class="teacher-note" style="margin:12px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span><b>Administración de actividades</b><br><span class="muted">Agrega, edita o activa/desactiva actividades sin entrar a Google Sheets.</span></span><button class="secondary" onclick="openGeneralActivityManager()">⚙️ Administrar actividades</button></div>');
+  loadGenericTeacherData_(t,0);
+}
+function loadGenericTeacherData_(t,intento){
+  $('table').innerHTML='<div class="box">Conectando con Google Sheets de '+escapeHtml(t.role)+'...</div>';
   const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(t.role)+'&_='+Date.now();
-  jsonpBiology(url,function(d){if(!d||!d.ok){$('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar '+t.role+'.')+'</div>';return;}generalTeacherData=d;renderGeneralTeacherTable();},function(){$('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.</div>';});
+  jsonpBiology(url,function(d){
+    if(!d||!d.ok){
+      if(intento<2){setTimeout(function(){loadGenericTeacherData_(t,intento+1);},1000);return;}
+      $('table').innerHTML='<div class="box msg">'+escapeHtml((d&&d.error)||'No se pudo cargar '+t.role+'.')+'<br><button class="secondary" style="margin-top:10px" onclick="loadGenericTeacherData_(TEACHER_DIRECTORY.find(x=>x.id===currentTeacherId),0)">🔄 Reintentar conexión</button></div>';
+      return;
+    }
+    generalTeacherData=d;
+    renderGeneralTeacherTable();
+  },function(){
+    if(intento<2){setTimeout(function(){loadGenericTeacherData_(t,intento+1);},1000);return;}
+    $('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.<br><button class="secondary" style="margin-top:10px" onclick="loadGenericTeacherData_(TEACHER_DIRECTORY.find(x=>x.id===currentTeacherId),0)">🔄 Reintentar conexión</button></div>';
+  });
 }
 function renderGeneralTeacherTable(){
   const d=generalTeacherData;if(!d)return;
