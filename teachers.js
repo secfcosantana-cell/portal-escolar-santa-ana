@@ -147,7 +147,7 @@ function openTeacherProfile(id){
   if(!t)return;
   const box=$('teacherDirectoryBox');
   if(id==='francisco'){
-    box.innerHTML='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE</div><h2>Alfredo</h2><p class="muted">Biología y Física</p></div></div><div class="teacher-groups-title">Selecciona la materia</div><div class="teacher-group-grid"><button class="teacher-group-card" onclick="openFranciscoGroup(\'Biología · 1.º A\')"><span class="group-icon">🧬</span><span><b>Biología</b><small>Grupos 1.º A, 1.º B y 1.º C · Consulta y evaluación</small></span><span>→</span></button><button class="teacher-group-card" onclick="openFranciscoGroup(\'Física · 2.º A\')"><span class="group-icon">⚛️</span><span><b>Física</b><small>Grupo 2.º A · Consulta y evaluación</small></span><span>→</span></button></div></div>';
+    box.innerHTML='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE</div><h2>Alfredo</h2><p class="muted">Biología y Física</p></div></div><div class="teacher-groups-title">Selecciona la materia</div><div class="teacher-group-grid"><button class="teacher-group-card" onclick="openFranciscoGroup(\'Biología · 1.º A\')"><span class="group-icon">🧬</span><span><b>Biología</b><small>Grupos 1.º A, 1.º B y 1.º C · Consulta y evaluación</small></span><span>→</span></button><button class="teacher-group-card" onclick="openFranciscoGroup(\'Física · 2.º A\')"><span class="group-icon">⚛️</span><span><b>Física</b><small>Grupo 2.º A · Consulta y evaluación</small></span><span>→</span></button><button class="teacher-group-card" onclick="openGenericTeacherGroup(\'francisco\',\'Ofimática · 2.º A\',\'Ofimática\')"><span class="group-icon">💻</span><span><b>Ofimática</b><small>2.º A, 2.º B, 2.º C, 2.º D y 2.º E · Consulta y evaluación</small></span><span>→</span></button></div></div>';
     return;
   }
   let html='<div class="box teacher-profile"><button class="back" onclick="renderTeacherDirectory()">← Docentes</button><div class="teacher-profile-title"><span class="teacher-avatar">'+t.icon+'</span><div><div class="eyebrow">DOCENTE · EN LÍNEA</div><h2>'+escapeHtml(t.name)+'</h2><p class="muted">'+escapeHtml(t.role)+' · captura y consulta desde Google Sheets</p></div></div><div class="teacher-groups-title">Mis materias y grupos</div><div class="teacher-group-grid">';
@@ -254,13 +254,15 @@ const GENERAL_SCHOOL_SCRIPT_URL='https://script.google.com/macros/s/AKfycby3xGQ-
 const GENERAL_SUBJECT_GROUPS={
   'Artes':['1º A','2º A','2º B','2º C','2º D','2º E','3º A','3º B','3º C','3º D','3º E'],
   'Matemáticas':['2º D','3º A','3º B','3º C','3º D','3º E'],
-  'Ciencias':['1º D','1º E','2º E']
+  'Ciencias':['1º D','1º E','2º E'],
+  'Ofimática':['2º A','2º B','2º C','2º D','2º E']
 };
 const GENERAL_GROUP_COUNTS={
   'Artes|1º A':26,'Artes|2º A':27,'Artes|2º B':28,'Artes|2º C':28,'Artes|2º D':27,'Artes|2º E':28,
   'Artes|3º A':28,'Artes|3º B':29,'Artes|3º C':29,'Artes|3º D':29,'Artes|3º E':29,
   'Matemáticas|2º D':27,'Matemáticas|3º A':28,'Matemáticas|3º B':29,'Matemáticas|3º C':29,'Matemáticas|3º D':29,'Matemáticas|3º E':29,
-  'Ciencias|1º D':25,'Ciencias|1º E':23,'Ciencias|2º E':28
+  'Ciencias|1º D':25,'Ciencias|1º E':23,'Ciencias|2º E':28,
+  'Ofimática|2º A':5,'Ofimática|2º B':2,'Ofimática|2º C':7,'Ofimática|2º D':4,'Ofimática|2º E':9
 };
 let generalTeacherSubject='';
 let generalTeacherData=null;
@@ -271,12 +273,13 @@ function normalizarGeneralGrupo_(v){return String(v??'').trim().toUpperCase().re
 function normalizarGeneralNumero_(v){const t=String(v??'').trim().replace(/[^\d]/g,'');return t?String(Number(t)):'';}
 function generalActivityWeight_(a){const n=Number(String(a?.['Valor_%']??a?.['Valor %']??a?.Porcentaje??a?.Valor??0).replace(',','.'));return isNaN(n)?0:n;}
 
-function openGenericTeacherGroup(teacherId,groupLabel){
+function openGenericTeacherGroup(teacherId,groupLabel,subjectOverride){
   currentTeacherId=teacherId;
   const t=TEACHER_DIRECTORY.find(x=>x.id===teacherId);if(!t)return;
-  generalTeacherSubject=t.role;generalTeacherData=null;generalTeacherAssignment=null;
+  const subject=subjectOverride||t.role;
+  generalTeacherSubject=subject;generalTeacherData=null;generalTeacherAssignment=null;
   $('teacherDirectory').classList.add('hidden');$('teacher').classList.remove('hidden');
-  $('teacher').querySelector('h2').innerHTML='Panel docente · '+escapeHtml(t.role)+' <span class="muted">· '+escapeHtml(groupLabel.split(' · ')[1]||groupLabel)+' · EN LÍNEA</span>';
+  $('teacher').querySelector('h2').innerHTML='Panel docente · '+escapeHtml(subject)+' <span class="muted">· '+escapeHtml(groupLabel.split(' · ')[1]||groupLabel)+' · EN LÍNEA</span>';
   const selectedGeneralGroup=groupLabel.split(' · ')[1]||groupLabel;
   $('tg').innerHTML='<option value="'+escapeHtml(selectedGeneralGroup)+'">'+escapeHtml(selectedGeneralGroup)+'</option>';
   $('tg').value=selectedGeneralGroup;
@@ -291,7 +294,7 @@ function openGenericTeacherGroup(teacherId,groupLabel){
 }
 function loadGenericTeacherData_(t,intento){
   $('table').innerHTML='<div class="box">Conectando con Google Sheets de '+escapeHtml(t.role)+'...</div>';
-  const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(t.role)+'&_='+Date.now();
+  const url=GENERAL_SCHOOL_SCRIPT_URL+'?action=all&pin='+encodeURIComponent(teacherPinSession||TEACHER_PIN)+'&materia='+encodeURIComponent(subject)+'&_='+Date.now();
   jsonpBiology(url,function(d){
     if(!d||!d.ok){
       if(intento<2){setTimeout(function(){loadGenericTeacherData_(t,intento+1);},1000);return;}
@@ -302,7 +305,7 @@ function loadGenericTeacherData_(t,intento){
     renderGeneralTeacherTable();
   },function(){
     if(intento<2){setTimeout(function(){loadGenericTeacherData_(t,intento+1);},1000);return;}
-    $('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(t.role)+'.<br><button class="secondary" style="margin-top:10px" onclick="loadGenericTeacherData_(TEACHER_DIRECTORY.find(x=>x.id===currentTeacherId),0)">🔄 Reintentar conexión</button></div>';
+    $('table').innerHTML='<div class="box msg">No se pudo conectar con Google Sheets de '+escapeHtml(subject)+'.<br><button class="secondary" style="margin-top:10px" onclick="loadGenericTeacherData_(TEACHER_DIRECTORY.find(x=>x.id===currentTeacherId),0)">🔄 Reintentar conexión</button></div>';
   });
 }
 function renderGeneralTeacherTable(){
