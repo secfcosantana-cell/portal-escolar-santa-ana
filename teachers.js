@@ -277,7 +277,7 @@ function renderGeneralTeacherTable(){
   if(actionHost) actionHost.insertAdjacentHTML('afterend',teacherPanelActionBar(generalTeacherSubject,$('tg').value));
   const students=asignacion.alumnos||[],evals=asignacion.evaluaciones||[];
   const acts=(asignacion.actividades||[]).filter(a=>!['no','false','0'].includes(String(a.Activa??'').trim().toLowerCase()));
-  let html='<p class="muted">Captura la calificación de cada actividad de 0 a 10. El porcentaje se calcula automáticamente según el valor de cada actividad.</p><div class="teacher-note"><b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.</div><div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+generalActivityWeight_(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
+  let html='<p class="muted">Captura la calificación de cada actividad de 0 a 10. El porcentaje se calcula automáticamente según el valor de cada actividad.</p><div class="teacher-note"><b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.</div><div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><b>'+escapeHtml(nombreActividadExport_(a)||('Actividad '+(a.ID_Actividad||'')))+'</b><br><span class="muted">'+generalActivityWeight_(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
   students.forEach(st=>{
     const lista=String(st.lista??st['No. lista']??'').trim();let total=0;
     html+='<tr><td>'+escapeHtml(lista)+'. <b>'+escapeHtml(st.nombre||st.Alumno||'')+'</b></td>';
@@ -515,6 +515,9 @@ function activityIcon(id){
   return icons[id]||'📌';
 }
 
+function nombreActividadExport_(a){
+  return String(a?.actividad??a?.Actividad??a?.nombre??a?.Nombre??a?.descripcion??a?.Descripción??'').trim();
+}
 function teacherTable(){
   if(typeof generalTeacherSubject!=='undefined' && generalTeacherSubject){renderGeneralTeacherTable();return;}
   if(!window.teacherData)return;
@@ -525,7 +528,7 @@ function teacherTable(){
   if(!asignacion){$('table').innerHTML='<div class="box msg">No se encontró la asignación de Biología '+escapeHtml(fullGroup)+'.</div>';return;}
   const students=asignacion.alumnos||[],evals=asignacion.evaluaciones||[];
   const acts=(asignacion.actividades||[]).filter(a=>!['no','false','0'].includes(String(a.Activa??'').trim().toLowerCase()));
-  let html='<p class="muted">Captura la calificación de cada actividad de 0 a 10. El porcentaje se calcula automáticamente según el valor de cada actividad.</p><div class="teacher-note"><b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.</div><div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><span class="muted">'+biologyActivityWeight(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
+  let html='<p class="muted">Captura la calificación de cada actividad de 0 a 10. El porcentaje se calcula automáticamente según el valor de cada actividad.</p><div class="teacher-note"><b>Ejemplo:</b> una calificación de 8 en una actividad con valor de 15% genera <b>12%</b> acumulado.</div><div class="tableWrap"><table class="table"><thead><tr><th>Alumno</th>'+acts.map(a=>'<th>'+escapeHtml(a.ID_Actividad||'')+'<br><b>'+escapeHtml(nombreActividadExport_(a)||('Actividad '+(a.ID_Actividad||'')))+'</b><br><span class="muted">'+biologyActivityWeight(a)+'%</span></th>').join('')+'<th>Acumulado</th></tr></thead><tbody>';
   students.forEach(st=>{
     const lista=String(st.lista||'').trim();let total=0;
     html+='<tr><td>'+escapeHtml(lista)+'. <b>'+escapeHtml(st.nombre||'')+'</b></td>';
