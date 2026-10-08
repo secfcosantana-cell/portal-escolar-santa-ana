@@ -283,7 +283,11 @@ function openGenericTeacherGroup(teacherId,groupLabel,subjectOverride){
   const selectedGeneralGroup=groupLabel.split(' · ')[1]||groupLabel;
   const subjectGroups=GENERAL_SUBJECT_GROUPS[subject]||[selectedGeneralGroup];
   $('tg').innerHTML=subjectGroups.map(function(g){return '<option value="'+escapeHtml(g)+'">'+escapeHtml(g)+'</option>';}).join('');
-  $('tg').value=selectedGeneralGroup;
+  // El botón puede traer "2.º B" mientras el catálogo usa "2º B".
+  // Comparamos el grupo normalizado para que el selector nunca quede vacío.
+  const selectedNormalized=normalizarGeneralGrupo_(selectedGeneralGroup);
+  const matchingGroup=subjectGroups.find(function(g){return normalizarGeneralGrupo_(g)===selectedNormalized;})||subjectGroups[0]||selectedGeneralGroup;
+  $('tg').value=matchingGroup;
   $('tg').onchange=function(){
     loadGenericTeacherData_(t,0);
   };
