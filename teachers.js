@@ -22,6 +22,44 @@ function descargarTablaCalificacionesExcel(materia,grupo){
     const td=input.closest('td');
     if(td)td.textContent=input.value===''?'':String(input.value);
   });
+
+  // En el Excel mostramos, además del ID y porcentaje, el nombre completo
+  // de cada actividad. La tabla visible usa el ID (A1, A2, etc.), así que
+  // aquí recuperamos el nombre desde la asignación actual.
+  let actividadesExport=[];
+  if(typeof generalTeacherAssignment!=='undefined' && generalTeacherAssignment){
+    actividadesExport=generalTeacherAssignment.actividades||[];
+  }else if(typeof window.teacherData!=='undefined' && window.teacherData){
+    const grupoActual=$('tg')?.value||'';
+    const grupoCompleto=grupoActual && !String(grupoActual).includes('º')?'1º '+grupoActual:grupoActual;
+    const normGrupo=typeof normalizarBioGrupo_==='function'?normalizarBioGrupo_(grupoCompleto):String(grupoCompleto).trim().toUpperCase();
+    const asig=(window.teacherData.asignaciones||[]).find(function(a){
+      const g=typeof normalizarBioGrupo_==='function'?normalizarBioGrupo_(a.grupo):String(a.grupo||'').trim().toUpperCase();
+      return g===normGrupo;
+    });
+    if(asig)actividadesExport=asig.actividades||[];
+  }
+  const nombreActividad=function(a){
+    return a?.actividad??a?.Actividad??a?.nombre??a?.Nombre??a?.descripcion??a?.Descripción??'';
+  };
+  const pesoActividad=function(a){
+    if(typeof generalActivityWeight_==='function')return generalActivityWeight_(a);
+    if(typeof biologyActivityWeight==='function')return biologyActivityWeight(a);
+    const n=Number(String(a?.['Valor_%']??a?.['Valor %']??a?.Porcentaje??a?.porcentaje??a?.Valor??0).replace(',','.'));
+    return isNaN(n)?0:n;
+  };
+  const actividadPorId={};
+  actividadesExport.forEach(function(a){
+    actividadPorId[String(a.ID_Actividad??a.idActividad??a.id??'').trim()]=a;
+  });
+  clone.querySelectorAll('thead th').forEach(function(th){
+    const id=String(th.textContent||'').split(/\s+/)[0].trim();
+    const a=actividadPorId[id];
+    if(!a)return;
+    const nombre=nombreActividad(a);
+    const peso=pesoActividad(a);
+    th.innerHTML=escapeHtml(id)+'<br><b>'+escapeHtml(nombre||'Actividad '+id)+'</b><br><span>'+peso+'%</span>';
+  });
   clone.querySelectorAll('script').forEach(function(x){x.remove();});
   const titulo=document.createElement('div');
   const fecha=new Date().toLocaleString('es-MX');
