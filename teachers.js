@@ -8,24 +8,44 @@ const TEACHER_DIRECTORY=[
 ];
 
 function descargarTablaCalificacionesExcel(materia,grupo){
-  // Los paneles generales usan #table; Física usa #physicsBox.
-  const table=document.querySelector('#table table, #physicsBox table');
-  if(!table){alert('No hay una tabla de calificaciones para descargar.');return;}
-  const clone=table.cloneNode(true);
-  clone.querySelectorAll('input').forEach(input=>{const td=input.closest('td');if(td)td.textContent=input.value||'';});
-  clone.querySelectorAll('script').forEach(x=>x.remove());
+  // El Excel debe salir de la misma información que está mostrando el panel,
+  // no de una tabla/estado que haya quedado de una vista anterior.
+  if(typeof generalTeacherSubject!=='undefined' && generalTeacherSubject && typeof renderGeneralTeacherTable==='function'){
+    renderGeneralTeacherTable();
+  }else if(typeof window.teacherData!=='undefined' && window.teacherData && typeof teacherTable==='function'){
+    teacherTable();
+  }
+  const panelTable=document.querySelector('#teacher:not(.hidden) #table table, #physics:not(.hidden) #physicsBox table, #table table, #physicsBox table');
+  if(!panelTable){alert('No hay una tabla de calificaciones para descargar.');return;}
+  const clone=panelTable.cloneNode(true);
+  clone.querySelectorAll('input').forEach(function(input){
+    const td=input.closest('td');
+    if(td)td.textContent=input.value===''?'':String(input.value);
+  });
+  clone.querySelectorAll('script').forEach(function(x){x.remove();});
   const titulo=document.createElement('div');
-  titulo.innerHTML='<h2>Reporte de calificaciones</h2><p><b>Materia:</b> '+escapeHtml(materia||'')+' &nbsp; <b>Grupo:</b> '+escapeHtml(grupo||'')+'</p><p>Calificaciones de 0 a 10 y porcentaje acumulado.</p>';
+  const fecha=new Date().toLocaleString('es-MX');
+  titulo.innerHTML='<h2>Reporte de calificaciones</h2>'+
+    '<p><b>Materia:</b> '+escapeHtml(materia||'')+' &nbsp; <b>Grupo:</b> '+escapeHtml(grupo||'')+'</p>'+
+    '<p>Calificaciones de 0 a 10 y porcentaje acumulado. <b>Generado:</b> '+escapeHtml(fecha)+'</p>';
   const wrap=document.createElement('div');
-  wrap.appendChild(titulo);wrap.appendChild(clone);
-  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:12px}h2{margin-bottom:4px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:5px;text-align:center}th{background:#dbe7f0;font-weight:bold}td:first-child,th:first-child{text-align:left}</style></head><body>'+wrap.innerHTML+'</body></html>';
+  wrap.appendChild(titulo);
+  wrap.appendChild(clone);
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'+
+    'body{font-family:Arial,sans-serif;font-size:12px}h2{margin-bottom:4px}'+
+    'table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:5px;text-align:center}'+
+    'th{background:#dbe7f0;font-weight:bold}td:first-child,th:first-child{text-align:left}'+
+    '</style></head><body>'+wrap.innerHTML+'</body></html>';
   const blob=new Blob(['\\ufeff',html],{type:'application/vnd.ms-excel'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   const safeMateria=String(materia||'Reporte').replace(/[^a-z0-9áéíóúüñ]+/gi,'_');
   const safeGrupo=String(grupo||'Grupo').replace(/[^a-z0-9áéíóúüñ]+/gi,'_');
-  a.href=url;a.download='Calificaciones_'+safeMateria+'_'+safeGrupo+'.xls';
-  document.body.appendChild(a);a.click();a.remove();
+  a.href=url;
+  a.download='Calificaciones_'+safeMateria+'_'+safeGrupo+'.xls';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
