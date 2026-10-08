@@ -8,85 +8,124 @@ const TEACHER_DIRECTORY=[
 ];
 
 function descargarTablaCalificacionesExcel(materia,grupo){
-  // El Excel debe salir de la misma información que está mostrando el panel,
-  // no de una tabla/estado que haya quedado de una vista anterior.
+  // El Excel se construye con la tabla que el docente está viendo.
   if(typeof generalTeacherSubject!=='undefined' && generalTeacherSubject && typeof renderGeneralTeacherTable==='function'){
     renderGeneralTeacherTable();
   }else if(typeof window.teacherData!=='undefined' && window.teacherData && typeof teacherTable==='function'){
     teacherTable();
   }
+
   const panelTable=document.querySelector('#teacher:not(.hidden) #table table, #physics:not(.hidden) #physicsBox table, #table table, #physicsBox table');
   if(!panelTable){alert('No hay una tabla de calificaciones para descargar.');return;}
-  const clone=panelTable.cloneNode(true);
-  clone.querySelectorAll('input').forEach(function(input){
-    const td=input.closest('td');
-    if(td)td.textContent=input.value===''?'':String(input.value);
-  });
 
-  // En el Excel mostramos, además del ID y porcentaje, el nombre completo
-  // de cada actividad. La tabla visible usa el ID (A1, A2, etc.), así que
-  // aquí recuperamos el nombre desde la asignación actual.
-  let actividadesExport=[];
-  if(typeof generalTeacherAssignment!=='undefined' && generalTeacherAssignment){
-    actividadesExport=generalTeacherAssignment.actividades||[];
-  }else if(typeof window.teacherData!=='undefined' && window.teacherData){
-    const grupoActual=$('tg')?.value||'';
-    const grupoCompleto=grupoActual && !String(grupoActual).includes('º')?'1º '+grupoActual:grupoActual;
-    const normGrupo=typeof normalizarBioGrupo_==='function'?normalizarBioGrupo_(grupoCompleto):String(grupoCompleto).trim().toUpperCase();
-    const asig=(window.teacherData.asignaciones||[]).find(function(a){
-      const g=typeof normalizarBioGrupo_==='function'?normalizarBioGrupo_(a.grupo):String(a.grupo||'').trim().toUpperCase();
-      return g===normGrupo;
+  // Primero pedimos el catálogo actual de actividades. Esto garantiza que
+  // el nombre que llega al Excel sea el mismo que está registrado en Sheets,
+  // aunque la respuesta action=all no incluya el nombre.
+  const exportar=function(catalogo){
+    const clone=panelTable.cloneNode(true);
+    clone.querySelectorAll('input').forEach(function(input){
+      const td=input.closest('td');
+      if(td)td.textContent=input.value===''?'':String(input.value);
     });
-    if(asig)actividadesExport=asig.actividades||[];
-  }
-  const nombreActividad=function(a){
-    return a?.actividad??a?.Actividad??a?.nombre??a?.Nombre??a?.descripcion??a?.Descripción??'';
-  };
-  const pesoActividad=function(a){
-    if(typeof generalActivityWeight_==='function')return generalActivityWeight_(a);
-    if(typeof biologyActivityWeight==='function')return biologyActivityWeight(a);
-    const n=Number(String(a?.['Valor_%']??a?.['Valor %']??a?.Porcentaje??a?.porcentaje??a?.Valor??0).replace(',','.'));
-    return isNaN(n)?0:n;
-  };
-  const actividadPorId={};
-  actividadesExport.forEach(function(a){
-    actividadPorId[String(a.ID_Actividad??a.idActividad??a.id??'').trim()]=a;
-  });
-  clone.querySelectorAll('thead th').forEach(function(th){
-    const id=String(th.textContent||'').split(/\s+/)[0].trim();
-    const a=actividadPorId[id];
-    if(!a)return;
-    const nombre=nombreActividad(a);
-    const peso=pesoActividad(a);
-    th.innerHTML=escapeHtml(id)+'<br><b>'+escapeHtml(nombre||'Actividad '+id)+'</b><br><span>'+peso+'%</span>';
-  });
-  clone.querySelectorAll('script').forEach(function(x){x.remove();});
-  const titulo=document.createElement('div');
-  const fecha=new Date().toLocaleString('es-MX');
-  titulo.innerHTML='<h2>Reporte de calificaciones</h2>'+
-    '<p><b>Materia:</b> '+escapeHtml(materia||'')+' &nbsp; <b>Grupo:</b> '+escapeHtml(grupo||'')+'</p>'+
-    '<p>Calificaciones de 0 a 10 y porcentaje acumulado. <b>Generado:</b> '+escapeHtml(fecha)+'</p>';
-  const wrap=document.createElement('div');
-  wrap.appendChild(titulo);
-  wrap.appendChild(clone);
-  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'+
-    'body{font-family:Arial,sans-serif;font-size:12px}h2{margin-bottom:4px}'+
-    'table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:5px;text-align:center}'+
-    'th{background:#dbe7f0;font-weight:bold}td:first-child,th:first-child{text-align:left}'+
-    '</style></head><body>'+wrap.innerHTML+'</body></html>';
-  const blob=new Blob(['\\ufeff',html],{type:'application/vnd.ms-excel'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  const safeMateria=String(materia||'Reporte').replace(/[^a-z0-9áéíóúüñ]+/gi,'_');
-  const safeGrupo=String(grupo||'Grupo').replace(/[^a-z0-9áéíóúüñ]+/gi,'_');
-  a.href=url;
-  a.download='Calificaciones_'+safeMateria+'_'+safeGrupo+'.xls';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
 
+    const actividadPorId={};
+    (catalogo||[]).forEach(function(a){
+      const id=String(a.ID_Actividad??a.idActividad??a.id??'').trim();
+      if(id)actividadPorId[id]=a;
+    });
+
+    const nombreActividad=function(a){
+      return String(a?.actividad??a?.Actividad??a?.nombre??a?.Nombre??a?.descripcion??a?.Descripción??'').trim();
+    };
+    const pesoActividad=function(a){
+      if(typeof generalActivityWeight_==='function')return generalActivityWeight_(a);
+      if(typeof biologyActivityWeight==='function')return biologyActivityWeight(a);
+      const n=Number(String(a?.['Valor_%']??a?.['Valor %']??a?.Porcentaje??a?.porcentaje??a?.Valor??0).replace(',','.'));
+      return isNaN(n)?0:n;
+    };
+
+    clone.querySelectorAll('thead th').forEach(function(th){
+      const id=String(th.getAttribute('data-actividad-id')||String(th.textContent||'').split(/\\s+/)[0]).trim();
+      if(!id || id==='Alumno' || id==='Acumulado')return;
+      const a=actividadPorId[id];
+      const nombre=a?nombreActividad(a):String(th.getAttribute('data-actividad-nombre')||'').trim();
+      const textoPeso=(String(th.textContent||'').match(/([0-9]+(?:[.,][0-9]+)?)%/)||[])[1]||'';
+      const peso=a?pesoActividad(a):textoPeso;
+      th.innerHTML=escapeHtml(id)+'<br><b>'+escapeHtml(nombre||'Actividad '+id)+'</b><br><span>'+escapeHtml(String(peso))+'%</span>';
+    });
+
+    clone.querySelectorAll('script').forEach(function(x){x.remove();});
+
+    const titulo=document.createElement('div');
+    const fecha=new Date().toLocaleString('es-MX');
+    titulo.innerHTML='<h2>Reporte de calificaciones</h2>'+
+      '<p><b>Materia:</b> '+escapeHtml(materia||'')+' &nbsp; <b>Grupo:</b> '+escapeHtml(grupo||'')+'</p>'+
+      '<p>Calificaciones de 0 a 10 y porcentaje acumulado. <b>Generado:</b> '+escapeHtml(fecha)+'</p>';
+
+    const wrap=document.createElement('div');
+    wrap.appendChild(titulo);
+    wrap.appendChild(clone);
+
+    const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'+
+      'body{font-family:Arial,sans-serif;font-size:12px}h2{margin-bottom:4px}'+
+      'table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:5px;text-align:center}'+
+      'th{background:#dbe7f0;font-weight:bold}td:first-child,th:first-child{text-align:left}'+
+      'th b{display:block;font-size:11px;margin:2px 0;white-space:normal}'+
+      '</style></head><body>'+wrap.innerHTML+'</body></html>';
+
+    const blob=new Blob(['\\ufeff',html],{type:'application/vnd.ms-excel'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const safeMateria=String(materia||'Reporte').replace(/[^a-z0-9áéíóúüñ]+/gi,'_');
+    const safeGrupo=String(grupo||'Grupo').replace(/[^a-z0-9áéíóúüñ]+/gi,'_');
+    a.href=url;
+    a.download='Calificaciones_'+safeMateria+'_'+safeGrupo+'.xls';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+
+  // Obtener la asignación exacta y consultar el catálogo de actividades.
+  let idAsignacion='';
+  if(typeof generalTeacherAssignment!=='undefined' && generalTeacherAssignment){
+    idAsignacion=String(generalTeacherAssignment.idAsignacion||'').trim();
+  }
+  if(!idAsignacion && typeof window.teacherData!=='undefined' && window.teacherData){
+    const g=$('tg')?.value||'';
+    const fullGroup=String(g).includes('º')?g:'1º '+g;
+    const norm=typeof normalizarBioGrupo_==='function'?normalizarBioGrupo_(fullGroup):String(fullGroup).trim().toUpperCase();
+    const asig=(window.teacherData.asignaciones||[]).find(function(x){
+      const ng=typeof normalizarBioGrupo_==='function'?normalizarBioGrupo_(x.grupo):String(x.grupo||'').trim().toUpperCase();
+      return ng===norm;
+    });
+    if(asig)idAsignacion=String(asig.idAsignacion||'').trim();
+  }
+
+  if(!idAsignacion){
+    exportar([]);
+    return;
+  }
+
+  const script=(materia==='Biología'||materia==='Física')?BIOLOGY_SCRIPT_URL:GENERAL_SCHOOL_SCRIPT_URL;
+  const params={
+    action:'activityAdmin',
+    op:'list',
+    pin:teacherPinSession||TEACHER_PIN,
+    materia:materia||'',
+    idAsignacion:idAsignacion,
+    grupo:grupo||'',
+    _:Date.now()
+  };
+  const u=script+'?'+Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+
+  jsonpBiology(u,function(d){
+    exportar(d&&d.ok?(d.actividades||[]):[]);
+  },function(){
+    // Si el catálogo no responde, todavía generamos el Excel con la tabla visible.
+    exportar([]);
+  });
+}
 function teacher(){
   hideLanding();
   const pin=prompt('PIN docente:');
