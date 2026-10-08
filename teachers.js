@@ -281,8 +281,12 @@ function openGenericTeacherGroup(teacherId,groupLabel,subjectOverride){
   $('teacherDirectory').classList.add('hidden');$('teacher').classList.remove('hidden');
   $('teacher').querySelector('h2').innerHTML='Panel docente · '+escapeHtml(subject)+' <span class="muted">· '+escapeHtml(groupLabel.split(' · ')[1]||groupLabel)+' · EN LÍNEA</span>';
   const selectedGeneralGroup=groupLabel.split(' · ')[1]||groupLabel;
-  $('tg').innerHTML='<option value="'+escapeHtml(selectedGeneralGroup)+'">'+escapeHtml(selectedGeneralGroup)+'</option>';
+  const subjectGroups=GENERAL_SUBJECT_GROUPS[subject]||[selectedGeneralGroup];
+  $('tg').innerHTML=subjectGroups.map(function(g){return '<option value="'+escapeHtml(g)+'">'+escapeHtml(g)+'</option>';}).join('');
   $('tg').value=selectedGeneralGroup;
+  $('tg').onchange=function(){
+    loadGenericTeacherData_(t,0);
+  };
   $('table').innerHTML='<div class="box">Cargando evaluaciones numéricas desde Google Sheets...</div>';
   // Evitar que quede visible el administrador de Biología al cambiar a otro docente/materia.
   const oldManager=$('generalActivityManager');if(oldManager)oldManager.remove();
