@@ -359,8 +359,10 @@ function renderPhysicsTeacher(){
     '<thead><tr>'+
       '<th>Alumno</th>'+
       actividades.map(a=>
-        '<th>'+escapeHtml(a.ID_Actividad||'')+
-        '<br><span class="muted">'+physicsActivityWeight(a)+'%</span></th>'
+        '<th style="min-width:125px;white-space:normal">'+
+        '<span style="display:block;font-weight:700">'+escapeHtml(a.actividad||'Actividad sin nombre')+'</span>'+
+        '<span class="muted" style="display:block;font-size:11px">ID: '+escapeHtml(a.ID_Actividad||'')+' · '+physicsActivityWeight(a)+'%</span>'+
+        '</th>'
       ).join('')+
       '<th>Acumulado</th>'+
     '</tr></thead><tbody>';
