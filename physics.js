@@ -1,4 +1,4 @@
-const PHYSICS_STUDENT_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxYs9ZEvfvly_HwWNubtrXCPquZ9Eyln4ZQkhU3qwgbuzjNgwyomFFvhrzV0DgiHE52Fw/exec';
+const PHYSICS_STUDENT_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx-H4rNiEyoLQlmNUQsLyMbjCerDHZ8eOiVZBkyY869k2CR-kP0LOhvxkujkBav8Gab/exec';
 let physicsTeacherPinSession='';
 
 function openPhysics(){
