@@ -8,15 +8,28 @@ const TEACHER_DIRECTORY=[
 ];
 
 function descargarTablaCalificacionesExcel(materia,grupo){
-  // El Excel se construye con la tabla que el docente está viendo.
-  if(typeof generalTeacherSubject!=='undefined' && generalTeacherSubject && typeof renderGeneralTeacherTable==='function'){
+  // Elegir exclusivamente la tabla del módulo visible y de la materia solicitada.
+  const esFisica=String(materia||'').trim().toLowerCase()==='física';
+  const teacherVisible=!$('teacher')?.classList.contains('hidden');
+  const physicsVisible=!$('physics')?.classList.contains('hidden');
+
+  if(esFisica && physicsVisible){
+    if(typeof renderPhysicsTeacher==='function') renderPhysicsTeacher();
+  }else if(teacherVisible && typeof generalTeacherSubject!=='undefined' &&
+           String(generalTeacherSubject||'').trim().toLowerCase()===String(materia||'').trim().toLowerCase() &&
+           typeof renderGeneralTeacherTable==='function'){
     renderGeneralTeacherTable();
-  }else if(typeof window.teacherData!=='undefined' && window.teacherData && typeof teacherTable==='function'){
+  }else if(teacherVisible && typeof window.teacherData!=='undefined' &&
+           window.teacherData && typeof teacherTable==='function'){
     teacherTable();
   }
 
-  const panelTable=document.querySelector('#teacher:not(.hidden) #table table, #physics:not(.hidden) #physicsBox table, #table table, #physicsBox table');
-  if(!panelTable){alert('No hay una tabla de calificaciones para descargar.');return;}
+  // No usar selectores globales: podían capturar una tabla anterior de otra materia.
+  const panelTable=esFisica
+    ? document.querySelector('#physics:not(.hidden) #physicsBox table')
+    : document.querySelector('#teacher:not(.hidden) #table table');
+
+  if(!panelTable){alert('No se encontró la tabla visible de '+(materia||'la materia')+'. Abre primero su grupo y vuelve a descargar.');return;}
 
   // Primero pedimos el catálogo actual de actividades. Esto garantiza que
   // el nombre que llega al Excel sea el mismo que está registrado en Sheets,
@@ -107,7 +120,9 @@ function descargarTablaCalificacionesExcel(materia,grupo){
     return;
   }
 
-  const script=(materia==='Biología'||materia==='Física')?BIOLOGY_SCRIPT_URL:GENERAL_SCHOOL_SCRIPT_URL;
+  const script=(materia==='Física' && typeof PHYSICS_STUDENT_SCRIPT_URL!=='undefined')
+    ? PHYSICS_STUDENT_SCRIPT_URL
+    : (materia==='Biología'?BIOLOGY_SCRIPT_URL:GENERAL_SCHOOL_SCRIPT_URL);
   const params={
     action:'activityAdmin',
     op:'list',
