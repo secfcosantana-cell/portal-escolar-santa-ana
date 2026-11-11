@@ -141,6 +141,71 @@ function descargarTablaCalificacionesExcel(materia,grupo){
     exportar([]);
   });
 }
+
+function descargarTablaCalificacionesPDF(materia, grupo) {
+  const esFisica = materia === 'Física' || materia === 'Fisica';
+  const panelTable = esFisica
+    ? document.querySelector('#physics:not(.hidden) #physicsBox table, #physicsBox table')
+    : document.querySelector('#teacher:not(.hidden) #table table, #table table');
+
+  if (!panelTable) {
+    alert('No se encontró la tabla de calificaciones para generar el PDF.');
+    return;
+  }
+
+  const clone = panelTable.cloneNode(true);
+  clone.querySelectorAll('input, textarea, select').forEach(function(control) {
+    const cell = control.closest('td');
+    if (cell) cell.textContent = control.value == null ? '' : String(control.value);
+  });
+  clone.querySelectorAll('button').forEach(function(button) { button.remove(); });
+  clone.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
+    el.removeAttribute('contenteditable');
+  });
+
+  const safe = function(value) {
+    return String(value || '').replace(/[<>]/g, '');
+  };
+  const titulo = 'Calificaciones_' +
+    safe(materia).replace(/[^a-z0-9áéíóúüñ]+/gi, '_') + '_' +
+    safe(grupo).replace(/[^a-z0-9áéíóúüñ]+/gi, '_');
+
+  const ventana = window.open('', '_blank');
+  if (!ventana) {
+    alert('El navegador bloqueó la ventana del PDF. Permite las ventanas emergentes para este portal e inténtalo nuevamente.');
+    return;
+  }
+
+  const fecha = new Date().toLocaleString('es-MX');
+  ventana.document.open();
+  ventana.document.write(
+    '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+    '<title>' + titulo + '</title><style>' +
+    '@page{size:A4 landscape;margin:8mm}' +
+    '*{box-sizing:border-box}' +
+    'body{font-family:Arial,sans-serif;color:#172b3a;margin:0;font-size:9px}' +
+    'h1{font-size:16px;margin:0 0 4px;text-align:center}' +
+    '.meta{text-align:center;font-size:9px;margin:0 0 10px}' +
+    'table{border-collapse:collapse;width:100%;table-layout:auto}' +
+    'thead{display:table-header-group} tr{page-break-inside:avoid}' +
+    'th,td{border:1px solid #7b8790;padding:4px 5px;text-align:center;vertical-align:middle;overflow-wrap:anywhere}' +
+    'th{background:#dbe7f0;font-weight:bold}' +
+    'th:first-child,td:first-child{text-align:left;min-width:150px}' +
+    'input{display:none}' +
+    '@media screen{body{padding:12px} .hint{margin:8px 0;color:#52606d}}' +
+    '</style></head><body>' +
+    '<h1>Reporte de calificaciones</h1>' +
+    '<p class="meta"><b>Materia:</b> ' + safe(materia) +
+    ' &nbsp; <b>Grupo:</b> ' + safe(grupo) +
+    ' &nbsp; <b>Generado:</b> ' + fecha + '</p>' +
+    clone.outerHTML +
+    '<p class="hint">En el cuadro de impresión selecciona «Guardar como PDF» y orientación «Horizontal» si no aparece seleccionada.</p>' +
+    '<script>window.onload=function(){setTimeout(function(){window.focus();window.print();},400);};<\/script>' +
+    '</body></html>'
+  );
+  ventana.document.close();
+}
+
 function teacher(){
   hideLanding();
   const pin=prompt('PIN docente:');
@@ -192,7 +257,7 @@ function cleanupTeacherPanelActions(){
 function teacherPanelActionBar(materia,grupo){
   return '<div class="teacher-panel-actions" id="teacherPanelActions">'+
     '<button class="back" onclick="teacherBackToGroups()">← Regresar a mis grupos</button>'+
-    '<button class="primary teacher-download-btn" onclick="descargarTablaCalificacionesExcel(&quot;'+escapeHtml(materia||'')+'&quot;,&quot;'+escapeHtml(grupo||'')+'&quot;)">📥 Descargar Excel</button>'+
+    '<button class="primary teacher-download-btn" onclick="descargarTablaCalificacionesExcel(&quot;'+escapeHtml(materia||'')+'&quot;,&quot;'+escapeHtml(grupo||'')+'&quot;)">📥 Descargar Excel</button>'+'<button class="secondary teacher-download-btn" onclick="descargarTablaCalificacionesPDF(&quot;'+escapeHtml(materia||'')+'&quot;,&quot;'+escapeHtml(grupo||'')+'&quot;)">📄 Descargar PDF</button>'+
   '</div>';
 }
 
