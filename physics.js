@@ -344,7 +344,7 @@ function renderPhysicsTeacher(){
     '<div class="box">'+
     '<div class="teacher-panel-actions">'+
     '<button class="back" onclick="teacherBackToGroups()">← Regresar a mis grupos</button>'+
-    '<button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;Física&quot;,&quot;2.º A&quot;)">📥 Descargar Excel</button>'+
+    '<button class="primary" onclick="descargarTablaCalificacionesExcel(&quot;Física&quot;,&quot;2.º A&quot;)">📥 Descargar Excel</button>'+'<button class="secondary" onclick="descargarTablaCalificacionesPDF(&quot;Física&quot;,&quot;2.º A&quot;)">📄 Descargar PDF</button>'+
     '</div>'+
     '<div class="eyebrow">FÍSICA · 2.º A · DOCENTE</div>'+
     '<h2>Panel docente</h2>'+
