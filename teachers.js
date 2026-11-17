@@ -181,7 +181,7 @@ function descargarTablaCalificacionesPDF(materia, grupo) {
   ventana.document.write(
     '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
     '<title>' + titulo + '</title><style>' +
-    '@page{size:A4 landscape;margin:8mm}' +
+    '@page{size:letter landscape;margin:5mm}' +
     '*{box-sizing:border-box}' +
     'body{font-family:Arial,sans-serif;color:#172b3a;margin:0;font-size:9px}' +
     'h1{font-size:16px;margin:0 0 4px;text-align:center}' +
@@ -192,8 +192,15 @@ function descargarTablaCalificacionesPDF(materia, grupo) {
     'th{background:#dbe7f0;font-weight:bold}' +
     'th:first-child,td:first-child{text-align:left;min-width:150px}' +
     'input{display:none}' +
+    'body.pdf-physics{font-size:6px;width:100%;zoom:.72}' +
+    'body.pdf-physics h1{font-size:10px;margin:0 0 2px}' +
+    'body.pdf-physics .meta{font-size:6px;margin:0 0 4px}' +
+    'body.pdf-physics table{width:100%;table-layout:fixed}' +
+    'body.pdf-physics th,body.pdf-physics td{font-size:6px;line-height:1.05;padding:1px 2px;overflow-wrap:anywhere}' +
+    'body.pdf-physics th:first-child,body.pdf-physics td:first-child{width:34mm;min-width:0}' +
+    'body.pdf-physics .hint{display:none}' +
     '@media screen{body{padding:12px} .hint{margin:8px 0;color:#52606d}}' +
-    '</style></head><body>' +
+    '</style></head><body' + (esFisica ? ' class="pdf-physics"' : '') + '>' +
     '<h1>Reporte de calificaciones</h1>' +
     '<p class="meta"><b>Materia:</b> ' + safe(materia) +
     ' &nbsp; <b>Grupo:</b> ' + safe(grupo) +
