@@ -797,3 +797,39 @@ body{min-height:100svh;overflow-x:hidden}
 .resource-form-wide{grid-column:1/-1}
 .resource-admin-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
 @media(max-width:700px){.resource-form-grid{grid-template-columns:1fr}.resource-form-wide{grid-column:auto}.resource-admin-actions{justify-content:stretch}.resource-admin-actions button{flex:1}}
+
+
+/* Física: reducir el ancho de captura para dar más espacio al acumulado */
+.physics-grade-table{
+  width:100%;
+  min-width:900px;
+  table-layout:fixed;
+}
+.physics-grade-table th:first-child,
+.physics-grade-table td:first-child{
+  width:225px;
+  min-width:225px;
+}
+.physics-grade-table th:last-child,
+.physics-grade-table td:last-child{
+  width:105px;
+  min-width:105px;
+  white-space:nowrap;
+  font-weight:800;
+}
+.physics-grade-table th:not(:first-child):not(:last-child),
+.physics-grade-table td:not(:first-child):not(:last-child){
+  min-width:68px;
+  padding-left:4px;
+  padding-right:4px;
+}
+.physics-grade-table .physics-grade-input{
+  display:block;
+  width:54px!important;
+  max-width:54px;
+  min-width:0!important;
+  margin:0 auto;
+  padding:7px 4px!important;
+  text-align:center;
+  font-size:13px!important;
+}
